@@ -56,12 +56,6 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 
 
 
-ffs = testing_ffs[1,]
-f0 = testing_f0s[1]
-template = templates_lm[[i]]
-
-
-
 #' Method 3 psi estimation
 #'
 #' This function estimates the psi value using the method 3 from Nearey and Assmann (2007).
