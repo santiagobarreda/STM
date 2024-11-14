@@ -31,5 +31,3 @@ correctOUflow_internal_ = function (posterior_probabilities){
   posterior_probabilities = posterior_probabilities / sum(posterior_probabilities)
   return(posterior_probabilities)
 }
-
-

@@ -55,7 +55,6 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 }
 
 
-
 #' Method 3 psi estimation
 #'
 #' This function estimates the psi value using the method 3 from Nearey and Assmann (2007).
@@ -163,3 +162,4 @@ method2 = function (ffs, f0=NA, template, vowel_priors=NULL, correctOUflow=TRUE,
 
   return(output)
 }
+

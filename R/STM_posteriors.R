@@ -13,7 +13,7 @@ STM_posteriors <- function(mat) {
 
   output = list()
   output$df = mat
-  class(output) = c("STM_posteriors")
+  class(output) = "STM_posteriors"
   return(output)
 }
 

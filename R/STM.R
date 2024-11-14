@@ -25,7 +25,7 @@ STM = function(formants, template, vowel_priors = NULL, correctOUflow=TRUE) {
       formants, template$means[j,], template$covariance[[j]], log = TRUE)
   }
 
-  log_vowel_density = log_vowel_density - apply(log_vowel_density, 1, function(x) mean(diff(x)))
+  log_vowel_density = log_vowel_density - apply(log_vowel_density, 1, function(x) mean(x))
 
   if (!is.null(vowel_priors))
     log_vowel_density = sweep(log_vowel_density, 2, log(vowel_priors), `+`)

@@ -16,20 +16,20 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
   }
 
   fnum = as.factor (rep(1:nffs, each = n))
-  speakers = as.factor(rep(speakers,nffs))
-  vowels = as.factor(rep(vowels,nffs))
-  vk = interaction (vowels, fnum)
+  speakers_x = as.factor(rep(speakers,nffs))
+  vowels_x = as.factor(rep(vowels,nffs))
+  vk = interaction (vowels_x, fnum)
   nspeakers = length(unique((speakers)))
   nvowels = length(unique((vowels)))
 
   stats::contrasts (vk) = 'contr.sum'
-  stats::contrasts (speakers) = 'contr.sum'
+  stats::contrasts (speakers_x) = 'contr.sum'
 
-  model = stats::lm (ffs ~ 0+speakers + vk)
+  model = stats::lm (ffs ~ 0+speakers_x + vk)
   gbars = model$coefficients[1:nspeakers]
 
   if (impute){
-    missing = data.frame (ffs, vk, speakers)[is.na(ffs),]
+    missing = data.frame (ffs, vk, speakers_x)[is.na(ffs),]
     if (nrow(missing) > 0){
       suppressWarnings({
         ffs[is.na(ffs)] = stats::predict(model, newdata = missing)
@@ -55,7 +55,3 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
 
   return (output)
 }
-
-# formants = h95data[,c(10:12,28:30)]
-# speakers = h95data$speaker
-# vowels = h95data$vowel

@@ -4,7 +4,15 @@
 \alias{PSTM}
 \title{Probabilistic Sliding Template Model}
 \usage{
-PSTM(ffs, f0, template, method = method6, correctOUflow = TRUE, ...)
+PSTM(
+  ffs,
+  f0,
+  template,
+  method = method6,
+  vowel_priors = NULL,
+  correctOUflow = TRUE,
+  ...
+)
 }
 \arguments{
 \item{ffs}{A vector, matrix, or dataframe of formant frequencies. Each row
@@ -15,6 +23,8 @@ is a different observation, each column is a formant measurement.}
 \item{template}{A template object}
 
 \item{method}{A function that that estimates the 'best' psi given some information.}
+
+\item{vowel_priors}{A vector of prior probabilities for each category}
 
 \item{correctOUflow}{A boolean indicating whether to correct for underflow
 and overflow using the correctOUflow() function.}
