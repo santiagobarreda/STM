@@ -45,7 +45,6 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
       cbind(formants=formants, vowels = factor(vowels),
             speakers = factor(speakers))
     })
-    output$gbar = 0
     for (i in 1:nspeakers){
       output[levels(speakers)[i]==output$speakers,1:nffs] =
         output[levels(speakers)[i]==output$speakers,1:nffs] - gbars[i]
