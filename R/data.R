@@ -1,6 +1,6 @@
 #' Hillenbrand et al. (1995)
 #'
-#' Vowel data.
+#' The Hillenbrand et al. vowel data.
 #'
 #' @format A data frame with 100 rows and 3 variables:
 #'
@@ -38,7 +38,6 @@
 #'   \item{\code{type}}{the speaker category: boy, girl, man, woman}
 #'   \item{\code{speaker}}{the speaker ID}
 #'   \item{\code{vowel}}{The actual vowel category using the original coding}
-#'   \item{\code{ipa}}{The actual vowel category using the IPA coding}
 #'   \item{\code{correct}}{the percent of correct classifications}
 #'   \item{\code{psi_1}}{An estimate of psi based on vowel midpoints.}
 #'   \item{\code{psi_2}}{An estimate of psi based on measurements at 20\% and 80\%}
@@ -61,6 +60,70 @@
 #' # TBD
 
 "h95_data"
+
+#' Hillenbrand et al. (1995)
+#'
+#' The Hillenbrand et al. vowel data. NA values have been imputed using the
+#' normalize_impute function provided in this package.
+#'
+#' @format A data frame with 100 rows and 3 variables:
+#'
+#' \describe{
+#'   \item{\code{file}}{the filename}
+#'   \item{\code{dur}}{A column indicating the duration in milliseconds}
+#'   \item{\code{f0}}{the fundamental frequency in Hertz}
+#'   \item{\code{f1}}{the f1 frequency in Hertz}
+#'   \item{\code{f2}}{the f2 frequency in Hertz}
+#'   \item{\code{f3}}{the f3 frequency in Hertz}
+#'   \item{\code{f1_1}}{the first formant at 10\% of duration}
+#'   \item{\code{f1_2}}{the first formant at 20\% of duration}
+#'   \item{\code{f1_3}}{the first formant at 30\% of duration}
+#'   \item{\code{f1_4}}{the first formant at 40\% of duration}
+#'   \item{\code{f1_5}}{the first formant at 50\% of duration}
+#'   \item{\code{f1_6}}{the first formant at 60\% of duration}
+#'   \item{\code{f1_7}}{the first formant at 70\% of duration}
+#'   \item{\code{f1_8}}{the first formant at 80\% of duration}
+#'   \item{\code{f2_1}}{the second formant at 10\% of duration}
+#'   \item{\code{f2_2}}{the second formant at 20\% of duration}
+#'   \item{\code{f2_3}}{the second formant at 30\% of duration}
+#'   \item{\code{f2_4}}{the second formant at 40\% of duration}
+#'   \item{\code{f2_5}}{the second formant at 50\% of duration}
+#'   \item{\code{f2_6}}{the second formant at 60\% of duration}
+#'   \item{\code{f2_7}}{the second formant at 70\% of duration}
+#'   \item{\code{f2_8}}{the second formant at 80\% of duration}
+#'   \item{\code{f3_1}}{the third formant at 10\% of duration}
+#'   \item{\code{f3_2}}{the third formant at 20\% of duration}
+#'   \item{\code{f3_3}}{the third formant at 30\% of duration}
+#'   \item{\code{f3_4}}{the third formant at 40\% of duration}
+#'   \item{\code{f3_5}}{the third formant at 50\% of duration}
+#'   \item{\code{f3_6}}{the third formant at 60\% of duration}
+#'   \item{\code{f3_7}}{the third formant at 70\% of duration}
+#'   \item{\code{f3_8}}{the third formant at 80\% of duration}
+#'   \item{\code{type}}{the speaker category: boy, girl, man, woman}
+#'   \item{\code{speaker}}{the speaker ID}
+#'   \item{\code{vowel}}{The actual vowel category using the original coding}
+#'   \item{\code{correct}}{the percent of correct classifications}
+#'   \item{\code{psi_1}}{An estimate of psi based on vowel midpoints.}
+#'   \item{\code{psi_2}}{An estimate of psi based on measurements at 20\% and 80\%}
+#'   \item{\code{ae}}{Number of classifications into ae}
+#'   \item{\code{ah}}{Number of classifications into ah}
+#'   \item{\code{aw}}{Number of classifications into aw}
+#'   \item{\code{eh}}{Number of classifications into eh}
+#'   \item{\code{ei}}{Number of classifications into ei}
+#'   \item{\code{er}}{Number of classifications into er}
+#'   \item{\code{ih}}{Number of classifications into ih}
+#'   \item{\code{iy}}{Number of classifications into iy}
+#'   \item{\code{oa}}{Number of classifications into oa}
+#'   \item{\code{oo}}{Number of classifications into oo}
+#'   \item{\code{uh}}{Number of classifications into uh}
+#'   \item{\code{uw}}{Number of classifications into uw.}
+#'   \item{\code{vote}}{The modal response}
+#' }
+#' @source \url{https://example.com/dataset_source}
+#' @examples
+#' # TBD
+
+"h95_data_no_NA"
 
 
 #' Hillenbrand et al. (1995) Classifications
