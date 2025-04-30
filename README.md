@@ -10,11 +10,6 @@ working_data/ contains data specifically for the paper.
 paper/ contains qmd files for paper and online materials including: derivations, STM code examples, and bootstrap analysis code. 
 
 
-### To load functions or install package:
+### To install package:
 
-package_path = "YOUR_PATH_HERE"
-
-devtools::load_all(package_path )
-
-devtools::install(package_path )
-
+devtools::install_github("santiagobarreda/STM")
