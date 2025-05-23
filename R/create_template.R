@@ -74,11 +74,18 @@ print.STM_template = function (x, ...){
 #' @return NULL
 #'
 
+#' @rdname create_template
+#' @export
+#' @method plot STM_template
+#' @param x A STM_template object.
+#' @param ... Additional arguments.
+#' @return NULL
+
 plot.STM_template = function (x, ...){
 
-  cols = c("#F7B5C5BF", "#27C0D8BF", "#F8A61BBF", "#0C8275BF", "#DB686FDC",
+  cols = rep(c("#F7B5C5BF", "#27C0D8BF", "#F8A61BBF", "#0C8275BF", "#DB686FDC",
            "#822B32BF", "#3A65AFBF", "#FF6400BF", "#413069B4", "#94CB94C8",
-           "#FEEF94C8", "#88021BB4", "#719F9FDC", "#CA87B9BF", "#6C0F2DC8")
+           "#FEEF94C8", "#88021BB4", "#719F9FDC", "#CA87B9BF", "#6C0F2DC8"),10)
 
   ellipses_1 = list()
   ellipses_2 = list()
