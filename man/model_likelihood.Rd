@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_likelihood.R
 \name{model_likelihood}
 \alias{model_likelihood}
-\title{model_likelihood}
+\title{Model likelihood from posterior probabilities}
 \usage{
 model_likelihood(
   classifications,
@@ -21,9 +21,18 @@ model_likelihood(
 A scalar, the likelihood of the model given the classifications and posterior probabilities.
 }
 \description{
-Calculate the likelihood of a model given classifications and posterior probabilities
+Calculates an overall model likelihood score from observed classifications and
+their corresponding posterior probabilities.
 }
 \examples{
-# Example usage:
-# TBD
+\dontrun{
+classifications <- c("a", "i", "a", "u")
+posterior_probabilities <- c(0.8, 0.7, 0.6, 0.9)
+model_likelihood(classifications, posterior_probabilities)
 }
+}
+
+
+
+
+

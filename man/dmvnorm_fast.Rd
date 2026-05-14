@@ -22,5 +22,11 @@ A scalar, the density of the multivariate normal distribution.
 Calculate the density of a multivariate normal distribution.
 }
 \examples{
-# TBD
+\dontrun{
+features <- matrix(c(500, 1500, 2500), nrow = 1)
+means <- c(520, 1480, 2480)
+covariance <- diag(c(10000, 25000, 40000))
+dmvnorm_fast(features, means, covariance, log = TRUE)
 }
+}
+

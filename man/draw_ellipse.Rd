@@ -21,5 +21,11 @@ draw_ellipse(means, covariance, n_points = 100, show = TRUE, ...)
 Draw an ellipse
 }
 \examples{
-# TBD
+\dontrun{
+means <- c(500, 1500)
+covariance <- matrix(c(400, 120, 120, 900), nrow = 2)
+ell <- draw_ellipse(means, covariance, show = FALSE)
+head(ell)
 }
+}
+

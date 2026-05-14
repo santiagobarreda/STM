@@ -37,6 +37,10 @@ This function estimates the psi value using the method 3 from Nearey and Assmann
 It also returns the log density of the estimated psi value.
 }
 \examples{
-#examples
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+method2(as.numeric(h95_data_no_NA[1, 4:6]), template = template)
 }
+}
+

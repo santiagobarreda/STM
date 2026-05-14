@@ -43,5 +43,13 @@ each category based on the estimate of psi, the template, and token
 acoustic properties.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+ffs <- as.numeric(h95_data_no_NA[1, 4:6])
+f0 <- h95_data_no_NA$f0[1]
+out <- PSTM(ffs, f0, template)
+print(out)
 }
+}
+

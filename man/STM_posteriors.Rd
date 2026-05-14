@@ -43,5 +43,11 @@ A subset of the data frame in the STM_posteriors object.
 This function creates an object of the S3 class "STM_posteriors", the output of the XSTM functions.
 }
 \examples{
-# TBD
+\dontrun{
+mat <- matrix(runif(12), nrow = 3)
+mat <- mat / rowSums(mat)
+post <- STM_posteriors(mat)
+summary(post)
 }
+}
+

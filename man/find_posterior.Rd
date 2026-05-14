@@ -25,5 +25,12 @@ function returns a matrix of posteriors with columns for the mean, standard
 deviation, density, probability, and rounded probability.
 }
 \examples{
-# TBD
+\dontrun{
+likelihoods <- matrix(c(7.1, 0.12, -1.0, 7.3, 0.11, -0.8), ncol = 3, byrow = TRUE)
+colnames(likelihoods) <- c("likelihood_mu", "likelihood_sd", "likelihood_density")
+priors <- matrix(c(7.2, 0.13, -0.5, 7.2, 0.13, -0.5), ncol = 3, byrow = TRUE)
+colnames(priors) <- c("prior_mu", "prior_sd", "prior_density")
+find_posterior(likelihoods, priors, type = "BSTM")
 }
+}
+

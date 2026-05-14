@@ -23,5 +23,9 @@ It accepts a matrix of posterior probabilities and add columns to the matrix
 representing posteriors, and modifying posterior densities as required.
 }
 \examples{
-# TBD
+\dontrun{
+posterior <- matrix(c(7.1, 0.10, -1.2, 7.3, 0.12, -0.8), ncol = 3, byrow = TRUE)
+scale_posterior(posterior, type = "BSTM")
 }
+}
+

@@ -33,5 +33,10 @@ A template object.
 Create a dialectal template for use with the (X)STM family of functions.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+print(template)
 }
+}
+

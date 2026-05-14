@@ -69,6 +69,11 @@ h95_data
 The Hillenbrand et al. vowel data.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data)
+str(h95_data)
+head(h95_data)
+}
 }
 \keyword{datasets}
+

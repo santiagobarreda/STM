@@ -2,7 +2,7 @@
 % Please edit documentation in R/inpute_NA.R
 \name{impute_NA}
 \alias{impute_NA}
-\title{impute_NA}
+\title{Impute missing formant values}
 \usage{
 impute_NA(formants, speakers, vowels, sim_error = FALSE)
 }
@@ -16,10 +16,12 @@ impute_NA(formants, speakers, vowels, sim_error = FALSE)
 \item{sim_error}{A logical indicating whether to simulate error.}
 }
 \value{
-What your function returns.
+A numeric matrix with the same dimensions as \code{formants}, where missing
+entries have been imputed.
 }
 \description{
-Imputes missing formant values with or without random error.
+Imputes missing formant values using speaker and vowel information, optionally
+with simulated residual error.
 }
 \details{
 Predicts log(formant)~speaker+vowel and imputes missing values.
@@ -28,6 +30,16 @@ data with a mean of zero and a standard deviation equal to the residual
 error of the regression model.
 }
 \examples{
-# Example usage:
-# TBD
+\dontrun{
+data(h95_data)
+formants <- as.matrix(h95_data[, 4:6])
+formants[1, 1] <- NA
+imputed <- impute_NA(formants, speakers = h95_data$speaker, vowels = h95_data$vowel)
+head(imputed)
 }
+}
+
+
+
+
+

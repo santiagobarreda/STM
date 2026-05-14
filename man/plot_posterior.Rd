@@ -2,9 +2,7 @@
 % Please edit documentation in R/plot_posterior.R
 \name{plot_posterior}
 \alias{plot_posterior}
-\title{Plot STM modelling results
-Plot the posterior distribution of the formants and the fundamental frequency
-given a template and a set of formant frequencies.}
+\title{Plot posterior density from STM output}
 \usage{
 plot_posterior(df, psi_range = c(6.9, 7.6), n_steps = 1000)
 }
@@ -16,10 +14,19 @@ plot_posterior(df, psi_range = c(6.9, 7.6), n_steps = 1000)
 \item{n_steps}{A scalar of the number of steps to take in the psi range}
 }
 \description{
-Plot STM modelling results
-Plot the posterior distribution of the formants and the fundamental frequency
-given a template and a set of formant frequencies.
+Plots posterior density curves from a single \code{STM_output} data frame,
+including vowel-specific contributions across a psi grid.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+out <- BSTM(as.numeric(h95_data_no_NA[1, 4:6]), h95_data_no_NA$f0[1], template)
+plot_posterior(out$df)
 }
+}
+
+
+
+
+
