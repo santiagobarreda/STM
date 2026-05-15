@@ -14,6 +14,7 @@
 #' @param vowel_priors A vector of prior probabilities for each category
 #' @param correctOUflow A boolean indicating whether to correct for underflow
 #' @param type A string indicating the type of method to use for estimating psi
+#' @param lite A boolean indicating whether to return compact output for speed.
 #' @param ... additional parameters
 #'
 #' @return A scalar of the estimated psi value, and optionally the log density at that location.
@@ -26,7 +27,7 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
                     PSI_prior_sd = 0.1284, f0_hat_sd=0.1327,
                     f0_hat_intercept=-10.32, f0_hat_slope=2.145,
                     vowel_priors=vowel_priors,
-                    correctOUflow=TRUE, type="BSTM", ...){
+                    correctOUflow=TRUE, type="BSTM", lite=FALSE, ...){
 
   n_classes = nrow(template$means)
   likelihoods = t(sapply (1:n_classes, function(j){
@@ -35,8 +36,12 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
   }))
   rownames (likelihoods) = rownames(template$means)
 
-  priors = estimate_f0_psi_prior (f0)
-  priors = matrix(priors,n_classes,3,byrow=TRUE)
+  priors_f0_adjusted = estimate_f0_psi_prior(f0, PSI_prior_mean=PSI_prior_mean,
+                                              PSI_prior_sd=PSI_prior_sd,
+                                              f0_hat_sd=f0_hat_sd,
+                                              f0_hat_intercept=f0_hat_intercept,
+                                              f0_hat_slope=f0_hat_slope)
+  priors = matrix(priors_f0_adjusted, n_classes, 3, byrow=TRUE)
   colnames(priors) = c('prior_mu', 'prior_sd', 'prior_density')
 
   if (!is.null(vowel_priors))
@@ -44,6 +49,11 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 
   posterior = find_posterior(likelihoods, priors, type = type)
   if(correctOUflow) posterior[,4] = correctOUflow_internal(posterior[,4])
+
+  if (lite) {
+    return(list(psi = posterior[, "posterior_mu"],
+                posterior = posterior[, "posterior_probability"]))
+  }
 
   stimulus = c(ffs, f0)
   parameters = c(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd,

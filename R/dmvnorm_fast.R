@@ -14,13 +14,23 @@
 
 dmvnorm_fast = function(features, means, covariance, log = FALSE) {
 
-  if (is.data.frame(features)) as.matrix(features)
+  if (is.data.frame(features)) features = as.matrix(features)
   if (is.vector(features)) features = matrix(features, nrow = 1)
+
+  means = as.numeric(means)
+  if (ncol(features) != length(means)) {
+    stop("ncol(features) must equal length(means).", call. = FALSE)
+  }
 
   d = ncol(features)
 
   # Log determinant of covariance from the Cholesky decomposition
-  L = chol(covariance)
+  L = tryCatch(
+    chol(covariance),
+    error = function(e) {
+      stop("Covariance matrix must be positive definite.", call. = FALSE)
+    }
+  )
   log_det_sigma = 2 * sum(log(diag(L)))
 
   # Inverse of covariance using Cholesky decomposition

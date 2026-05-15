@@ -16,13 +16,24 @@
 
 create_template = function (features, classes, shared_covar = FALSE){
 
+  invert_covariance = function(covariance_matrix) {
+    chol_factor = tryCatch(
+      chol(covariance_matrix),
+      error = function(e) {
+        stop("Covariance matrix must be positive definite.", call. = FALSE)
+      }
+    )
+
+    list(covariance = covariance_matrix, precision = chol2inv(chol_factor))
+  }
+
   vs = levels(as.factor(classes))
   nvs = length(vs)
   means = matrix(0, nvs, ncol(features))
-  for (i in 1:ncol(features)) means[, i] = tapply(features[,
+  for (i in seq_len(ncol(features))) means[, i] = tapply(features[,
                                                            i], classes, mean)
   rownames(means) = vs
-  colnames(means) = paste("f", 1:ncol(features), sep = "")
+  colnames(means) = paste("f", seq_len(ncol(features)), sep = "")
   tmp = features
   covariance = list()
   precision = list()
@@ -30,13 +41,15 @@ create_template = function (features, classes, shared_covar = FALSE){
     tmp[classes == vs[i],] = features[classes == vs[i], ] -
       matrix(means[i, ], nrow(tmp[classes == vs[i],]), ncol(means), byrow = TRUE)
     if (!shared_covar){
-      covariance[[i]] = stats::var(tmp[classes == vs[i],])
-      precision[[i]] = solve(covariance[[i]])
+      covariance_info = invert_covariance(stats::var(tmp[classes == vs[i],]))
+      covariance[[i]] = covariance_info$covariance
+      precision[[i]] = covariance_info$precision
     }
   }
   if (shared_covar){
-    covar = stats::var(tmp)
-    precis = solve(covar)
+    covariance_info = invert_covariance(stats::var(tmp))
+    covar = covariance_info$covariance
+    precis = covariance_info$precision
 
     for (i in 1:nvs) covariance[[i]] = covar
     for (i in 1:nvs) precision[[i]] = precis
@@ -44,7 +57,7 @@ create_template = function (features, classes, shared_covar = FALSE){
   }
 
   ranges = matrix(0, ncol(features), 2)
-  for (i in 1:ncol(features)) ranges[i, ] = range(features[, i])
+  for (i in seq_len(ncol(features))) ranges[i, ] = range(features[, i])
 
   output = list(classes = vs, means = means, covariance = covariance,
                 precision = precision, ranges = ranges)
@@ -74,13 +87,6 @@ print.STM_template = function (x, ...){
 #' @return NULL
 #'
 
-#' @rdname create_template
-#' @export
-#' @method plot STM_template
-#' @param x A STM_template object.
-#' @param ... Additional arguments.
-#' @return NULL
-
 plot.STM_template = function (x, ...){
 
   cols = rep(c("#F7B5C5BF", "#27C0D8BF", "#F8A61BBF", "#0C8275BF", "#DB686FDC",
@@ -93,7 +99,7 @@ plot.STM_template = function (x, ...){
   max_x = -100000
   min_y = 1000000
   max_y = -100000
-  for (i in 1:nrow(x$means)){
+  for (i in seq_len(nrow(x$means))){
     ellipses_1[[i]] = draw_ellipse(x$means[i, 2:1], x$covariance[[i]][2:1, 2:1], show=FALSE)
     ellipses_2[[i]] = draw_ellipse(x$means[i, 2:1], x$covariance[[i]][2:1, 2:1]*2, show=FALSE)
     if (min(ellipses_2[[i]][,1]) < min_x) min_x = min(ellipses_2[[i]][,1])
@@ -105,7 +111,7 @@ plot.STM_template = function (x, ...){
   plot(x$means[, 2:1], type = "n", xlab = "F1", ylab = "F2",
        xlim = c(max_x,min_x), ylim = c(max_y,min_y))
   #rect (par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = "grey60", border = NA)
-  for (i in 1:nrow(x$means)){
+  for (i in seq_len(nrow(x$means))){
     lines(ellipses_1[[i]], type = "l", col = cols[i], lwd=2)
     lines(ellipses_2[[i]], type = "l", col = cols[i])
   }

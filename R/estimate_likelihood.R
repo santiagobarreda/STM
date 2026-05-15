@@ -14,7 +14,17 @@
 #' # TBD
 #' @export
 
-estimate_likelihood = function(ffs, means, covariance, precision = solve(covariance)){
+estimate_likelihood = function(ffs, means, covariance, precision = NULL){
+  if (is.null(precision)) {
+    chol_factor = tryCatch(
+      chol(covariance),
+      error = function(e) {
+        stop("Covariance matrix must be positive definite.", call. = FALSE)
+      }
+    )
+    precision = chol2inv(chol_factor)
+  }
+
   intercept_template = sum(unlist(ffs - means) %*% precision)
   slope_template =   -sum(precision)
   likelihood_mu = (-intercept_template/slope_template)
