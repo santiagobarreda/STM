@@ -157,3 +157,22 @@ test_that("disconnected designs fall back to lm()", {
   expect_null(fit_speaker_cell(fit_data$ffs, fit_data$speakers_x, fit_data$vk))
   expect_warning(normalize(sub[, c("f1", "f2", "f3")], sub$speaker, sub$vowel), "rank deficient")
 })
+
+test_that("rows with missing speaker or vowel IDs are left out, as lm() did", {
+  s = d$speaker; v = d$vowel
+  s[c(5, 40)] = NA
+  v[c(9, 300)] = NA
+  out = normalize(formants, s, v)
+  complete = !is.na(s) & !is.na(v)
+  ref = lm_reference(formants[complete, ], s[complete], v[complete])
+  gbar = tapply(out$gbar, out$speakers, function(x) unique(x[!is.na(x)]))
+  expect_equal(as.numeric(gbar), unname(ref$gbar), tolerance = 1e-12)
+  expect_true(all(is.na(out$gbar[is.na(s)])))
+
+  # imputation: fine when the missing formant has known IDs, an error otherwise
+  f = formants
+  f[100, 1] = NA
+  expect_false(anyNA(impute_NA(f, s, v)))
+  f[5, 1] = NA
+  expect_error(impute_NA(f, s, v), "missing speaker or vowel ID")
+})

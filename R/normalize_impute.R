@@ -40,7 +40,8 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
   fnum = factor(rep(seq_len(nffs), each = n))
   model_data = data.frame(ffs = ffs, speakers_x = rep(speakers, nffs),
                           vk = interaction(rep(vowels, nffs), fnum))
-  observed = !is.na(ffs)
+  # Rows with a missing formant, speaker, or vowel are left out of the fit
+  observed = !is.na(ffs) & !is.na(model_data$speakers_x) & !is.na(model_data$vk)
   fit_data = droplevels(model_data[observed, ])
 
   fit = fit_speaker_cell(fit_data$ffs, fit_data$speakers_x, fit_data$vk)
@@ -49,10 +50,13 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
   names(gbars) = levels(speakers)
 
   if (impute){
-    missing_idx = which(!observed)
+    missing_idx = which(is.na(ffs))
     output = input_formants
     if (length(missing_idx) > 0){
       missing = model_data[missing_idx, ]
+      if (anyNA(missing$speakers_x) || anyNA(missing$vk))
+        stop("Cannot impute values for tokens with a missing speaker or vowel ID.",
+             call. = FALSE)
       if (!all(missing$vk %in% levels(fit_data$vk)) ||
           !all(missing$speakers_x %in% levels(fit_data$speakers_x)))
         stop("Cannot impute: some speaker or vowel/formant combination has no observed data.",

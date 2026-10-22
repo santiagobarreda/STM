@@ -38,9 +38,9 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
-  parameters = c(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd,
-                 f0_hat_sd=f0_hat_sd,f0_hat_intercept=f0_hat_intercept,
-                 f0_hat_slope=f0_hat_slope)
+  parameters = scalar_params(list(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd,
+                                  f0_hat_sd=f0_hat_sd,f0_hat_intercept=f0_hat_intercept,
+                                  f0_hat_slope=f0_hat_slope))
   run_single_token(ffs, f0, template, "f0", parameters, parameters, vowel_priors,
                    type, correctOUflow, lite)
 }
@@ -84,7 +84,7 @@ method3 = function (ffs, f0 = NA, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
-  parameters = c(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd)
+  parameters = scalar_params(list(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd))
   run_single_token(ffs, f0, template, "fixed", parameters, parameters, vowel_priors,
                    type, correctOUflow, lite)
 }

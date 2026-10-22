@@ -62,7 +62,11 @@ xstm_internal = function(ffs, f0, template, method, vowel_priors, correctOUflow,
   # Built-in methods: process all tokens at once
   spec = batch_spec(method)
   if (!is.null(spec)){
-    params = batch_params(method, spec, dots)
+    params = batch_params(method, spec,
+                          c(list(ffs = NULL, f0 = NULL, template = NULL,
+                                 vowel_priors = vowel_priors,
+                                 correctOUflow = correctOUflow, type = .type,
+                                 lite = lite), dots))
     batch = xstm_batch(ffs, f0, template, spec$prior, params, vowel_priors, .type,
                        correctOUflow)
     parameters = if (length(params) == 0) NA else params

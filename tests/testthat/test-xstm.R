@@ -163,3 +163,24 @@ test_that("estimate_f0_psi_prior is vectorized over f0", {
 test_that("ffs with the wrong number of columns is an error", {
   expect_error(BSTM(lf[1:3, 1:2], lf0[1:3], template), "one column per template formant")
 })
+
+test_that("prior arguments are matched in batch mode exactly as in the method", {
+  loop = function(...) method6(...)   # not a built-in, so not batched
+  same = function(...) {
+    batched = BSTM(lf[1:5, ], lf0[1:5], template, ...)$posterior
+    expect_equal(batched, BSTM(lf[1:5, ], lf0[1:5], template, method = loop, ...)$posterior)
+    batched
+  }
+  default = BSTM(lf[1:5, ], lf0[1:5], template)$posterior
+  # partial name
+  partial = same(PSI_prior_m = 7.5)
+  expect_false(isTRUE(all.equal(partial, default)))
+  expect_equal(partial, BSTM(lf[1:5, ], lf0[1:5], template, PSI_prior_mean = 7.5)$posterior)
+  # named scalar
+  expect_equal(same(PSI_prior_mean = c(mu = 7.5)), partial)
+  expect_equal(unname(method6(lf[1, ], lf0[1], template, PSI_prior_mean = c(mu = 7.5))$parameters[1]), 7.5)
+  # positional: after the named driver arguments, the next free formal is PSI_prior_mean
+  positional = BSTM(lf[1:5, ], lf0[1:5], template, method6, NULL, TRUE, FALSE, 7.5)$posterior
+  expect_equal(positional, partial)
+  expect_error(BSTM(lf[1:5, ], lf0[1:5], template, PSI_prior_mean = c(7.2, 7.3)), "single numbers")
+})

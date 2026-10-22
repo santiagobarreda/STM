@@ -152,15 +152,29 @@ batch_spec = function(method){
 }
 
 
-# Prior parameters for a built-in method: its defaults, overridden by any
-# values passed through '...'.
+# Prior parameters for a built-in method, given the arguments the method would
+# be called with. A copy of the method that only returns its prior parameters
+# is called with those arguments, so R matches them exactly as it would for
+# the method itself (exact names, partial names, and position), and defaults
+# are filled in the same way.
 #' @noRd
 
-batch_params = function(method, spec, dots){
-  params = lapply(formals(method)[spec$params], eval)
-  supplied = intersect(names(dots), spec$params)
-  params[supplied] = dots[supplied]
-  unlist(params)
+batch_params = function(method, spec, args){
+  if (length(spec$params) == 0) return(NULL)
+  getter = method
+  body(getter) = bquote(scalar_params(mget(.(spec$params))))
+  do.call(getter, args)
+}
+
+
+# Named numeric vector of prior parameters, each a single unnamed number.
+#' @noRd
+
+scalar_params = function(values){
+  values = lapply(values, function(x) as.numeric(unname(x)))
+  if (any(lengths(values) != 1))
+    stop("Prior parameters must be single numbers.", call. = FALSE)
+  unlist(values)
 }
 
 
