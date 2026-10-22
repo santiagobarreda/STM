@@ -14,7 +14,8 @@ bootstrap_data(data, speaker = "speaker", relabel = TRUE)
 \item{relabel}{A boolean. If \code{TRUE}, speakers drawn more than once get
 new IDs for their second and later copies (e.g. "m01_2", "m01_3"), so that
 functions that group by speaker (e.g. \code{normalize()}) treat each copy
-as a separate speaker. The speaker column is returned as a character
+as a separate speaker. If a new ID would match an existing speaker ID, a
+further suffix is added. The speaker column is returned as a character
 vector in this case.}
 }
 \value{

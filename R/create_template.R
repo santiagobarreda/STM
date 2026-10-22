@@ -9,8 +9,8 @@
 #' @param shared_covar A boolean indicating whether to use a shared covariance
 #' matrix for all classes.
 #' @return A template object: a list with the class labels, class means,
-#' covariance and precision matrices, covariance log determinants, and the
-#' range of each feature.
+#' covariance and precision matrices, covariance log determinants, the
+#' range of each feature, and the feature (column) names, if any.
 #' @examples
 #' \dontrun{
 #' d = h95_data_no_NA
@@ -53,6 +53,8 @@ create_template = function (features, classes, shared_covar = FALSE){
   dimnames(means) = list(vs, paste("f", seq_len(ncol(features)), sep = ""))
 
   if (shared_covar){
+    if (nrow(features) <= nvs)
+      stop("shared_covar = TRUE needs more tokens than classes.", call. = FALSE)
     # Pooled within-class covariance, with n - k degrees of freedom
     centered = features - means[as.integer(classes), , drop = FALSE]
     pooled = crossprod(centered) / (nrow(features) - nvs)
@@ -76,7 +78,8 @@ create_template = function (features, classes, shared_covar = FALSE){
   dimnames(ranges) = NULL
 
   output = list(classes = vs, means = means, covariance = covariance,
-                precision = precision, log_det = log_det, ranges = ranges)
+                precision = precision, log_det = log_det, ranges = ranges,
+                features = colnames(features))
   class(output) = "STM_template"
   return(output)
 }
@@ -93,6 +96,7 @@ create_template = function (features, classes, shared_covar = FALSE){
 print.STM_template = function (x, ...){
   cat("\nTemplate with the following category-means:", "\n\n")
   print(x$means)
+  invisible(x)
 }
 
 #' @rdname create_template

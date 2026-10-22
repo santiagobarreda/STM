@@ -36,13 +36,12 @@ lobanov_normalize = function (formants, speakers, vowels, warning = FALSE){
   formants = as.matrix(formants)
   nffs = ncol(formants)
   speakers = as.factor(as.character(speakers))
-  n_speakers = length(unique(speakers))
   vowels = as.factor(as.character(vowels))
   speakersf = levels(speakers)
   vowelsf = levels(vowels)
 
-  for (j in 1:n_speakers) {
-    temp = (speakers == speakersf[j])
+  for (j in seq_along(speakersf)) {
+    temp = !is.na(speakers) & speakers == speakersf[j]
     mff = NULL
     sdff = NULL
     for (i in 1:nffs) {
@@ -55,6 +54,8 @@ lobanov_normalize = function (formants, speakers, vowels, warning = FALSE){
     sdffs = matrix(sdff, sum(temp), nffs, byrow = TRUE)
     formants[temp, ] = (formants[temp, , drop = FALSE] - mffs)/sdffs
   }
+  # tokens without a speaker ID cannot be normalized
+  formants[is.na(speakers), ] = NA
   output = data.frame(formants, speaker = speakers, vowel = vowels)
   return(output)
 }

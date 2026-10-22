@@ -55,6 +55,7 @@ print.STM_output = function(x, digits = 3, ...) {
   }
 
   print(as.data.frame(print_data))
+  invisible(x)
 }
 
 
@@ -85,7 +86,8 @@ print.STM_output = function(x, digits = 3, ...) {
 #' @rdname STM_output
 #' @param x An object of class "STM_output".
 #' @param y unused parameter
-#' @param ... Additional arguments passed to other methods.
+#' @param ... Additional arguments passed to \code{plot_posterior()}, e.g.
+#' \code{psi_range}.
 #' @export
 #' @method plot STM_output
 #'
@@ -94,6 +96,6 @@ plot.STM_output = function(x,y, ...) {
 
   plot_data = x$df
 
-  plot_posterior(plot_data)
+  plot_posterior(plot_data, ...)
 
 }

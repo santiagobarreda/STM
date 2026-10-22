@@ -22,8 +22,10 @@
 
 get_winners = function (results_list) {
   results_list = check_output_list(results_list)
-  winner = vapply(results_list, function(x) which.max(x$df$posterior_probability),
-                  integer(1))
+  winner = vapply(results_list, function(x){
+    w = which.max(x$df$posterior_probability)
+    if (length(w) == 0) NA_integer_ else w
+  }, integer(1))
   psi_hat = mapply(function(x, w) x$df$posterior_mu[w], results_list, winner)
   vowel_hat = mapply(function(x, w) rownames(x$df)[w], results_list, winner)
   output = data.frame(psi_hat = unname(psi_hat), vowel_hat = unname(vowel_hat),

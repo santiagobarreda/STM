@@ -38,6 +38,7 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
+  warn_unused_args(list(...), "method6")
   parameters = scalar_params(list(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd,
                                   f0_hat_sd=f0_hat_sd,f0_hat_intercept=f0_hat_intercept,
                                   f0_hat_slope=f0_hat_slope))
@@ -84,6 +85,7 @@ method3 = function (ffs, f0 = NA, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
+  warn_unused_args(list(...), "method3")
   parameters = scalar_params(list(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd))
   run_single_token(ffs, f0, template, "fixed", parameters, parameters, vowel_priors,
                    type, correctOUflow, lite)
@@ -122,6 +124,7 @@ method2 = function (ffs, f0=NA, template, vowel_priors=NULL, correctOUflow=TRUE,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
+  warn_unused_args(list(...), "method2")
   run_single_token(ffs, f0, template, "none", NULL, NA, vowel_priors,
                    type, correctOUflow, lite)
 }
@@ -133,6 +136,8 @@ method2 = function (ffs, f0=NA, template, vowel_priors=NULL, correctOUflow=TRUE,
 run_single_token = function(ffs, f0, template, prior, params, parameters,
                             vowel_priors, type, correctOUflow, lite){
   x = matrix(as.numeric(unlist(ffs)), nrow = 1)
+  check_feature_names(names(unlist(ffs)), template)
+  check_log_scale(x, f0, template, prior, params)
   batch = xstm_batch(x, f0, template, prior, params, vowel_priors, type,
                      correctOUflow)
   if (lite)

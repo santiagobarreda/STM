@@ -30,7 +30,8 @@ STM_output(df, stimulus, template, parameters, vowel_priors)
 
 \item{digits}{Number of digits to print.}
 
-\item{...}{Additional arguments passed to other methods.}
+\item{...}{Additional arguments passed to \code{plot_posterior()}, e.g.
+\code{psi_range}.}
 
 \item{i}{Row index (or column index, if \code{j} is not given).}
 

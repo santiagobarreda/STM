@@ -28,8 +28,8 @@ matrix for all classes.}
 }
 \value{
 A template object: a list with the class labels, class means,
-covariance and precision matrices, covariance log determinants, and the
-range of each feature.
+covariance and precision matrices, covariance log determinants, the
+range of each feature, and the feature (column) names, if any.
 }
 \description{
 Create a dialectal template for use with the (X)STM family of functions.

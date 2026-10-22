@@ -27,6 +27,7 @@ estimate_f0_psi_prior =
   function(f0, PSI_prior_mean=7.233, PSI_prior_sd = 0.1284,f0_hat_sd=0.1327,
            f0_hat_intercept=-10.32, f0_hat_slope=2.145, ...){
 
+    warn_unused_args(list(...), "estimate_f0_psi_prior")
     tmp = f0_psi_prior(f0, PSI_prior_mean, PSI_prior_sd, f0_hat_sd,
                        f0_hat_intercept, f0_hat_slope)
     if (length(f0) > 1) return(tmp)

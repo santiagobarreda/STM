@@ -48,7 +48,8 @@ print.STM_output_list = function(x, ...) {
   cat ("\nSTM_output_list object with the following elements:\n\n")
   cat ("$list: a list of",length(x),"STM_output objects\n")
   cat ("$winners: a data frame of the winning psi and vowel for each token\n")
-  cat ("$posterior: a data frame of the posterior probabilities for each token\n\n")
+  cat ("$posterior: an STM_posteriors object with the posterior probabilities for each token\n\n")
+  invisible(x)
 }
 
 

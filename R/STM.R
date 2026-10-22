@@ -29,6 +29,7 @@ STM = function(formants, template, vowel_priors = NULL, correctOUflow=TRUE) {
   if (is.data.frame(formants)) formants = as.matrix(formants)
   if (is.vector(formants)) formants = matrix(formants, nrow = 1)
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
+  check_feature_names(colnames(formants), template)
 
   n_samples = nrow(formants)
   n_classes = nrow(template$means)

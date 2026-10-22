@@ -18,6 +18,8 @@
 
 integrate_numerical = function(x, y) {
   n = length(x)
+  if (n < 2 || length(y) != n)
+    stop("x and y must have the same length, with at least two points.", call. = FALSE)
   integral = abs(sum((x[2:n] - x[1:(n-1)]) * (y[2:n] + y[1:(n-1)])) / 2)
 
   return(integral)

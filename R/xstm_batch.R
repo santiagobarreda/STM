@@ -18,6 +18,8 @@ xstm_batch = function(ffs, f0, template, prior, params, vowel_priors, type,
   if (d != ncol(template$means))
     stop("ffs must have one column per template formant (", ncol(template$means), ").",
          call. = FALSE)
+  if (length(f0) != n)
+    stop("There must be exactly one f0 value per token.", call. = FALSE)
   log_2pi = log(2 * pi)
 
   # likelihood of psi for each token and class
@@ -142,12 +144,14 @@ f0_psi_prior = function(f0, PSI_prior_mean, PSI_prior_sd, f0_hat_sd,
 
 batch_spec = function(method){
   if (identical(method, method6))
-    return(list(prior = "f0", params = c("PSI_prior_mean", "PSI_prior_sd", "f0_hat_sd",
-                                         "f0_hat_intercept", "f0_hat_slope")))
+    return(list(name = "method6", prior = "f0",
+                params = c("PSI_prior_mean", "PSI_prior_sd", "f0_hat_sd",
+                           "f0_hat_intercept", "f0_hat_slope")))
   if (identical(method, method3))
-    return(list(prior = "fixed", params = c("PSI_prior_mean", "PSI_prior_sd")))
+    return(list(name = "method3", prior = "fixed",
+                params = c("PSI_prior_mean", "PSI_prior_sd")))
   if (identical(method, method2))
-    return(list(prior = "none", params = character(0)))
+    return(list(name = "method2", prior = "none", params = character(0)))
   return(NULL)
 }
 
@@ -156,13 +160,15 @@ batch_spec = function(method){
 # be called with. A copy of the method that only returns its prior parameters
 # is called with those arguments, so R matches them exactly as it would for
 # the method itself (exact names, partial names, and position), and defaults
-# are filled in the same way.
+# are filled in the same way. Returns the parameters, and any arguments the
+# method did not recognize (those that land in its '...').
 #' @noRd
 
 batch_params = function(method, spec, args){
-  if (length(spec$params) == 0) return(NULL)
   getter = method
-  body(getter) = bquote(scalar_params(mget(.(spec$params))))
+  body(getter) = bquote(list(
+    params = if (.(length(spec$params)) > 0) scalar_params(mget(.(spec$params))),
+    unused = list(...)))
   do.call(getter, args)
 }
 

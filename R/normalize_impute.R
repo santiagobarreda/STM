@@ -26,6 +26,7 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
 
   # Zeros are treated as missing values
   formants[which(formants == 0)] = NA
+  if (all(is.na(formants))) stop("formants contain no observed values.", call. = FALSE)
   input_formants = formants
 
   logged = max(formants, na.rm = TRUE) <= 20
@@ -63,6 +64,9 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
              call. = FALSE)
       predicted = unname(fit$speaker[as.character(missing$speakers_x)] +
                            fit$cell[as.character(missing$vk)])
+      if (sim_error && !is.finite(fit$sigma))
+        stop("Too few observations to estimate the residual error for sim_error.",
+             call. = FALSE)
       if (sim_error)
         predicted = predicted + stats::rnorm(length(missing_idx), 0, fit$sigma)
 

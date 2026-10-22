@@ -56,7 +56,9 @@ model_likelihood = function (classifications, posterior_probabilities, correctOU
       posterior_probabilities = correctOUflow_internal(posterior_probabilities)
   }
 
-  output = sum (classifications*log(posterior_probabilities))
+  # cells with no responses contribute nothing, even if their probability is 0
+  responded = classifications != 0
+  output = sum (classifications[responded]*log(posterior_probabilities[responded]))
 
   return (output)
 }

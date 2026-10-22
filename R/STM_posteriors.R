@@ -42,6 +42,7 @@ print.STM_posteriors = function(x, digits = 3, ...) {
     print_data[,i] = round(print_data[,i], digits)
   }
   print(as.data.frame(print_data))
+  invisible(x)
 }
 
 
