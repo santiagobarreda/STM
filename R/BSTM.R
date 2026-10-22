@@ -24,6 +24,13 @@
 #' dataframe), an \code{STM_output} object. If several tokens are passed, an
 #' \code{STM_output_list}. If \code{lite = TRUE}, a list with matrices
 #' \code{psi} and \code{posterior}, one row per token.
+#' @details With the built-in methods (\code{method6}, \code{method3},
+#' \code{method2}), all tokens are processed together in one vectorized
+#' pass, so passing many tokens at once is much faster than calling this
+#' function once per token. User-supplied methods are called once per token.
+#' When only psi estimates and posterior probabilities are needed (e.g. when
+#' bootstrapping), \code{lite = TRUE} is faster still, since it skips
+#' building an output object for each token.
 #' @examples
 #' \dontrun{
 #' d = h95_data_no_NA

@@ -25,34 +25,6 @@ check_vowel_priors = function(vowel_priors, classes){
 }
 
 
-# Likelihood of psi for each template class, one row per class.
-#' @noRd
-
-template_likelihoods = function(ffs, template){
-  ffs = as.numeric(unlist(ffs))
-  n_classes = nrow(template$means)
-  likelihoods = t(vapply(seq_len(n_classes), function(j){
-    estimate_likelihood(ffs, template$means[j,], template$covariance[[j]],
-                        template$precision[[j]], template$log_det[[j]])
-  }, numeric(3)))
-  dimnames(likelihoods) = list(rownames(template$means),
-                               c("likelihood_mu", "likelihood_sd", "likelihood_density"))
-  return(likelihoods)
-}
-
-
-# Apply the underflow/overflow correction and keep rounded_pp in sync.
-#' @noRd
-
-finalize_posterior = function(posterior, correctOUflow){
-  if (correctOUflow)
-    posterior[, "posterior_probability"] =
-      correctOUflow_internal(posterior[, "posterior_probability"])
-  posterior[, "rounded_pp"] = round(posterior[, "posterior_probability"], 4)
-  return(posterior)
-}
-
-
 # Shared driver for BSTM() and PSTM().
 #' @noRd
 
@@ -87,6 +59,20 @@ xstm_internal = function(ffs, f0, template, method, vowel_priors, correctOUflow,
   if (!is.numeric(ffs)) stop("ffs must be numeric.", call. = FALSE)
   if (length(f0) != nrow(ffs)) stop("nrow(ffs) must equal length(f0).", call. = FALSE)
 
+  # Built-in methods: process all tokens at once
+  spec = batch_spec(method)
+  if (!is.null(spec)){
+    params = batch_params(method, spec, dots)
+    batch = xstm_batch(ffs, f0, template, spec$prior, params, vowel_priors, .type,
+                       correctOUflow)
+    parameters = if (length(params) == 0) NA else params
+    results = batch_results(batch, ffs, f0, template, parameters, vowel_priors, lite)
+    if (lite) return(results)
+    if (length(results$outputs) == 1) return(results$outputs[[1]])
+    return(new_STM_output_list(results$outputs, results$winners, results$posterior))
+  }
+
+  # User-supplied methods: one token at a time
   results = lapply(seq_len(nrow(ffs)), function(i) call_method(ffs[i, ], f0[i]))
 
   if (lite){

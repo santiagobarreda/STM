@@ -20,9 +20,18 @@
 #' }
 
 STM_output_list <- function(output_list) {
+  new_STM_output_list(output_list, get_winners(output_list),
+                      get_posterior(output_list))
+}
+
+
+# Constructor for when winners and posteriors are already computed.
+#' @noRd
+
+new_STM_output_list = function(output_list, winners, posterior) {
   class(output_list) = "STM_output_list"
-  attr(output_list, "winners") = get_winners(output_list)
-  attr(output_list, "posterior") = get_posterior(output_list)
+  attr(output_list, "winners") = winners
+  attr(output_list, "posterior") = posterior
   return(output_list)
 }
 

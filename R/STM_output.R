@@ -24,7 +24,7 @@
 STM_output <- function(df,stimulus, template, parameters,vowel_priors) {
 
   output = list()
-  output$df = data.frame(df)
+  output$df = if (is.data.frame(df)) df else data.frame(df)
   output$stimulus = stimulus
   output$template = template
   output$parameters = parameters

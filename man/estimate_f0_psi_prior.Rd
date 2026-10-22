@@ -15,7 +15,7 @@ estimate_f0_psi_prior(
 )
 }
 \arguments{
-\item{f0}{A scalar of fundamental frequency}
+\item{f0}{A log-transformed fundamental frequency, or a vector of them}
 
 \item{PSI_prior_mean}{A scalar of the mean of the prior distribution of psi
 given f0}
@@ -32,8 +32,9 @@ given f0}
 \item{...}{additional parameters}
 }
 \value{
-A list containing the mean and standard deviation of the prior distribution
-of f0 given psi, and the log density at that location.
+A named vector containing the mean and standard deviation of the prior
+distribution of psi given f0, and the log density at that location. If
+\code{f0} has more than one element, a matrix with one row per element.
 }
 \description{
 This function estimates the joint prior distribution of f0 and psi.
