@@ -7,7 +7,8 @@
 get_winners(results_list)
 }
 \arguments{
-\item{results_list}{A list of results from a BSTM or PSTM model.}
+\item{results_list}{A list of results from a BSTM or PSTM model: an
+\code{STM_output_list}, or a plain list of \code{STM_output} objects.}
 }
 \value{
 A data frame with columns for the psi and vowel.
@@ -19,11 +20,10 @@ and vowel.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-res <- BSTM(h95_data_no_NA[1:5, 4:6], h95_data_no_NA$f0[1:5], template)
-wins <- get_winners(res)
-head(wins)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+res = BSTM(log(d[1:5, c("f1", "f2", "f3")]), log(d$f0[1:5]), template)
+get_winners(res)
 }
 }
-

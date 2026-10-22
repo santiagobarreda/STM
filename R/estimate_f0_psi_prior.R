@@ -16,7 +16,10 @@
 #' @return A list containing the mean and standard deviation of the prior distribution
 #' of f0 given psi, and the log density at that location.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' # f0 must be log-transformed
+#' estimate_f0_psi_prior(f0 = log(220))
+#' }
 #' @export
 
 estimate_f0_psi_prior =

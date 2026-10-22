@@ -21,9 +21,8 @@ integral of the function.
 }
 \examples{
 \dontrun{
-x <- seq(-3, 3, length.out = 200)
-y <- dnorm(x)
+x = seq(-3, 3, length.out = 200)
+y = dnorm(x)
 integrate_numerical(x, y)
 }
 }
-

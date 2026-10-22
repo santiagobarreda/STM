@@ -4,11 +4,20 @@
 #' of the XSTM functions.
 #'
 #' @param output_list A list of STM_output objects.
-#' @return An object of class "STM_output".
+#' @return An object of class "STM_output_list".
 #' @export
 #'
 #' @examples
-#' # TBD
+#' \dontrun{
+#' d = h95_data_no_NA
+#' nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+#' template = create_template(nd[, 1:3], nd$vowels)
+#' res = BSTM(log(d[1:5, c("f1", "f2", "f3")]), log(d$f0[1:5]), template)
+#' length(res)
+#' res$winners
+#' res[[1]]
+#' res[2:3]
+#' }
 
 STM_output_list <- function(output_list) {
   class(output_list) = "STM_output_list"
@@ -23,8 +32,6 @@ STM_output_list <- function(output_list) {
 #' @param ... Additional arguments passed to other methods.
 #' @export
 #' @method print STM_output_list
-#' @examples
-#' # TBD
 #'
 
 print.STM_output_list = function(x, ...) {
@@ -85,17 +92,17 @@ length.STM_output_list = function(x) {
 
 
 #' @rdname STM_output_list
-#' @param X An object of class "STM_output_list".
-#' @param FUN The function to be applied.
-#' @param ... Additional arguments passed to other methods.
-#' @param simplify A logical indicating whether to simplify the result.
-#' @param USE.NAMES A logical indicating whether to use names.
+#' @param x An object of class "STM_output_list".
+#' @param i index.
+#' @return A new STM_output_list containing the selected elements.
+#' @usage \method{[}{STM_output_list}(x, i)
 #' @export
-#' @method sapply STM_output_list
+#' @method `[` STM_output_list
+#' @aliases [.STM_output_list
 #'
 
-sapply.STM_output_list = function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE){
-  sapply(unclass(X), FUN, ..., simplify = simplify, USE.NAMES = USE.NAMES)
+`[.STM_output_list` <- function(x, i) {
+  return(STM_output_list(unclass(x)[i]))
 }
 
 

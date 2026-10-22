@@ -4,16 +4,22 @@
 \alias{STM_posteriors}
 \alias{print.STM_posteriors}
 \alias{[.STM_posteriors}
-\alias{apply.STM_posteriors}
+\alias{as.matrix.STM_posteriors}
+\alias{dim.STM_posteriors}
+\alias{dimnames.STM_posteriors}
 \title{Create an object of class "STM_posteriors"}
 \usage{
 STM_posteriors(mat)
 
 \method{print}{STM_posteriors}(x, digits = 3, ...)
 
-\method{[}{STM_posteriors}(x, i, j)
+\method{[}{STM_posteriors}(x, i, j, drop)
 
-\method{apply}{STM_posteriors}(X, MARGIN, FUN, ...)
+\method{as.matrix}{STM_posteriors}(x, ...)
+
+\method{dim}{STM_posteriors}(x)
+
+\method{dimnames}{STM_posteriors}(x)
 }
 \arguments{
 \item{mat}{the matrix of posteriors}
@@ -28,26 +34,29 @@ STM_posteriors(mat)
 
 \item{j}{Column index.}
 
-\item{X}{An object of class "STM_posteriors".}
-
-\item{MARGIN}{A vector giving the subscripts which the function will be applied over.}
-
-\item{FUN}{The function to be applied.}
+\item{drop}{Passed to the matrix subsetting method.}
 }
 \value{
 An object of class "STM_posteriors".
 
-A subset of the data frame in the STM_posteriors object.
+A subset of the posterior matrix in the STM_posteriors object,
+following matrix semantics.
 }
 \description{
 This function creates an object of the S3 class "STM_posteriors", the output of the XSTM functions.
 }
+\details{
+\code{dim()}, \code{dimnames()} and \code{as.matrix()} methods
+are provided, so \code{nrow()}, \code{ncol()} and \code{apply()} work
+directly on STM_posteriors objects.
+}
 \examples{
 \dontrun{
-mat <- matrix(runif(12), nrow = 3)
-mat <- mat / rowSums(mat)
-post <- STM_posteriors(mat)
-summary(post)
+mat = matrix(runif(12), nrow = 3)
+mat = mat / rowSums(mat)
+post = STM_posteriors(mat)
+post
+post[1, ]
+nrow(post)
 }
 }
-

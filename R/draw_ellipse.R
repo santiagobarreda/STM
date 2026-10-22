@@ -8,7 +8,13 @@
 #' @param ... Additional arguments to pass to the lines function
 #'
 #' @examples
-#' # TBD
+#' \dontrun{
+#' means = c(1500, 500)
+#' covariance = matrix(c(40000, 6000, 6000, 4000), nrow = 2)
+#' plot(0, type = "n", xlim = c(1000, 2000), ylim = c(300, 700))
+#' draw_ellipse(means, covariance)
+#' draw_ellipse(means, covariance * 4, lty = 2)
+#' }
 #' @export
 
 

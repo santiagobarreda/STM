@@ -7,19 +7,22 @@
 STM(formants, template, vowel_priors = NULL, correctOUflow = TRUE)
 }
 \arguments{
-\item{formants}{A vector of formant frequencies, or a matrix or data frame of formant vectors. Each row
-is a different observation, each column is a formant measurement.}
+\item{formants}{A vector of normalized formant frequencies, or a matrix or
+data frame of formant vectors. Each row is a different observation, each
+column is a formant measurement.}
 
 \item{template}{A template object}
 
-\item{vowel_priors}{A vector of prior probabilities for each vowel category.}
+\item{vowel_priors}{A vector of prior probabilities for each vowel category.
+If named, names must match \code{template$classes}; otherwise values must be
+in the order of \code{template$classes}.}
 
 \item{correctOUflow}{A boolean indicating whether to correct for underflow
 and overflow using the correctOUflow() function.}
 }
 \value{
-A dataframe of posterior probabilities, one row for each token.
-a list of dataframes.
+An \code{STM_posteriors} object containing a matrix of posterior
+probabilities, one row for each token.
 }
 \description{
 Returns posterior probabilities for each category based on the template and
@@ -27,9 +30,11 @@ token acoustic properties.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-STM(h95_data_no_NA[1:10, 4:6], template)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+post = STM(nd[1:10, 1:3], template)
+post
+apply(post, 1, which.max)
 }
 }
-

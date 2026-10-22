@@ -4,25 +4,33 @@
 \alias{bootstrap_data}
 \title{Bootstrap data}
 \usage{
-bootstrap_data(data, speaker = NULL)
+bootstrap_data(data, speaker = "speaker", relabel = TRUE)
 }
 \arguments{
 \item{data}{A data frame containing vowel formant data.}
 
-\item{speaker}{A factor variable with subject IDs.}
+\item{speaker}{The name of the column in \code{data} containing speaker IDs.}
+
+\item{relabel}{A boolean. If \code{TRUE}, speakers drawn more than once get
+new IDs for their second and later copies (e.g. "m01_2", "m01_3"), so that
+functions that group by speaker (e.g. \code{normalize()}) treat each copy
+as a separate speaker. The speaker column is returned as a character
+vector in this case.}
 }
 \value{
 A data frame.
 }
 \description{
 Bootstrap data for use in cross-validation. Resampling with replacement is
-done based on unique elements in the 'speaker' vector.
+done based on unique elements in the 'speaker' vector: each unique speaker
+has the same chance of being drawn, regardless of how many rows they have,
+and all of a drawn speaker's rows are included.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-boot <- bootstrap_data(h95_data_no_NA, speaker = h95_data_no_NA$speaker)
-head(boot)
+set.seed(1)
+boot = bootstrap_data(h95_data_no_NA, speaker = "speaker")
+length(unique(boot$speaker))
+head(boot[, c("speaker", "vowel", "f1", "f2")])
 }
 }
-

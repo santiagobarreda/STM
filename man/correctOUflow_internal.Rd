@@ -2,29 +2,26 @@
 % Please edit documentation in R/correctOUflow_internal.R
 \name{correctOUflow_internal}
 \alias{correctOUflow_internal}
-\title{Correct underflow/overflow in posterior probabilities}
+\title{correctOUflow_internal}
 \usage{
 correctOUflow_internal(posterior_probabilities)
 }
 \arguments{
-\item{posterior_probabilities}{A vector of posterior probabilities}
+\item{posterior_probabilities}{A vector of posterior probabilities for one
+token, or a matrix (or \code{STM_posteriors} object) with one row per token.}
 }
 \value{
-A vector of posterior probabilities
+Posterior probabilities with the same shape as the input.
 }
 \description{
-Rescales posterior probabilities to avoid numerical underflow or overflow while
-preserving a valid probability simplex.
+Correct for underflow and overflow in posterior probabilities.
+Probabilities of exactly zero are replaced by \code{.Machine$double.eps} and
+probabilities are rescaled to sum to one: across the whole vector for a
+vector input, or within each row for a matrix input.
 }
-
 \examples{
 \dontrun{
-probs <- c(0, 1e-300, 0.4, 0.6)
-correctOUflow_internal(probs)
+correctOUflow_internal(c(0, 0.4, 0.6))
+correctOUflow_internal(rbind(c(0, 0.4, 0.6), c(0.2, 0.3, 0.5)))
 }
 }
-
-
-
-
-

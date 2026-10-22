@@ -5,7 +5,7 @@
 \alias{h95_classifications}
 \title{Hillenbrand et al. (1995) Classifications}
 \format{
-A data frame with 1168 rows and 12 columns:
+A data frame with 1668 rows and 12 columns:
 \describe{
   \item{\code{ae}}{Number of classifications into ae.}
   \item{\code{ah}}{Number of classifications into ah.}
@@ -22,20 +22,19 @@ A data frame with 1168 rows and 12 columns:
 }
 }
 \source{
-\url{https://example.com/dataset_source}
+Hillenbrand, J., Getty, L. A., Clark, M. J., & Wheeler, K. (1995).
+Acoustic characteristics of American English vowels. The Journal of the
+Acoustical Society of America, 97(5), 3099-3111. \doi{10.1121/1.411872}
 }
 \usage{
 h95_classifications
 }
 \description{
-Classification data data for the H95 dataset from 20 listeners presented the vowels at random.
+Classification data for the H95 dataset from 20 listeners presented the vowels at random.
 }
 \examples{
 \dontrun{
-data(h95_classifications)
-str(h95_classifications)
 head(h95_classifications)
 }
 }
 \keyword{datasets}
-

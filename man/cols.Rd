@@ -5,7 +5,7 @@
 \alias{cols}
 \title{Colors for plotting}
 \format{
-A vector of colors for plotting
+A character vector of 15 colors for plotting
 }
 \usage{
 cols
@@ -15,9 +15,7 @@ Colors for plotting
 }
 \examples{
 \dontrun{
-data(cols)
 head(cols)
 }
 }
 \keyword{datasets}
-

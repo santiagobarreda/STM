@@ -29,10 +29,8 @@ for variationist research. Language Variation and Change, 33(1), 27-53.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-formants <- as.matrix(h95_data_no_NA[, 4:6])
-out <- lobanov_normalize(formants, h95_data_no_NA$speaker, h95_data_no_NA$vowel)
+d = h95_data_no_NA
+out = lobanov_normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
 head(out)
 }
 }
-

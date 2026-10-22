@@ -10,6 +10,12 @@ Description: Implements the Sliding Template family of models for
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
+Imports:
+    graphics,
+    stats
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

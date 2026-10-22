@@ -6,13 +6,23 @@
 #' @param means A vector of means.
 #' @param covariance A matrix of covariance.
 #' @param log A boolean indicating whether to return the log density.
-#' @return A scalar, the density of the multivariate normal distribution.
+#' @param precision Optional precomputed inverse of \code{covariance}.
+#' @param log_det Optional precomputed log determinant of \code{covariance}.
+#' If both \code{precision} and \code{log_det} are provided, \code{covariance}
+#' is not used and no matrix decomposition is performed.
+#' @return A vector of densities, one for each row of \code{features}.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' features = log(matrix(c(500, 1500, 2500), nrow = 1))
+#' means = log(c(520, 1480, 2480))
+#' covariance = diag(c(0.01, 0.005, 0.004))
+#' dmvnorm_fast(features, means, covariance, log = TRUE)
+#' }
 #' @export
 #'
 
-dmvnorm_fast = function(features, means, covariance, log = FALSE) {
+dmvnorm_fast = function(features, means, covariance, log = FALSE,
+                        precision = NULL, log_det = NULL) {
 
   if (is.data.frame(features)) features = as.matrix(features)
   if (is.vector(features)) features = matrix(features, nrow = 1)
@@ -24,30 +34,27 @@ dmvnorm_fast = function(features, means, covariance, log = FALSE) {
 
   d = ncol(features)
 
-  # Log determinant of covariance from the Cholesky decomposition
-  L = tryCatch(
-    chol(covariance),
-    error = function(e) {
-      stop("Covariance matrix must be positive definite.", call. = FALSE)
-    }
-  )
-  log_det_sigma = 2 * sum(log(diag(L)))
-
-  # Inverse of covariance using Cholesky decomposition
-  precision = chol2inv(L)
+  if (is.null(precision) || is.null(log_det)) {
+    # Log determinant and inverse of covariance from the Cholesky decomposition
+    L = tryCatch(
+      chol(covariance),
+      error = function(e) {
+        stop("Covariance matrix must be positive definite.", call. = FALSE)
+      }
+    )
+    log_det = 2 * sum(log(diag(L)))
+    precision = chol2inv(L)
+  }
 
   # Center the observations by subtracting the mean vector
   # and calculate the quadratic form
-  centered = as.matrix(sweep(features, 2,  means))
+  centered = features - matrix(means, nrow(features), d, byrow = TRUE)
   quad_form = rowSums((centered %*% precision) * centered)
 
   # Compute log density
-  log_density = -0.5 * (d * log(2 * pi) + log_det_sigma + quad_form)
+  log_density = -0.5 * (d * log(2 * pi) + log_det + quad_form)
 
   if (!log) return(exp(log_density))
 
   return (log_density)
 }
-
-
-

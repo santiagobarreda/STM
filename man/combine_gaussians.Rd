@@ -15,12 +15,15 @@ combine_gaussians(mu_1, sd_1, mu_2, sd_2, d_1 = NULL, d_2 = NULL)
 
 \item{sd_2}{The standard deviation of the second Gaussian distribution}
 
-\item{d_1}{The peak density of the first gaussian}
+\item{d_1}{The peak log density of the first gaussian. Defaults to the
+peak log density of a normalized gaussian.}
 
-\item{d_2}{The peak density of the second gaussian}
+\item{d_2}{The peak log density of the second gaussian. Defaults to the
+peak log density of a normalized gaussian.}
 }
 \value{
-The mean and standard deviation of the combined Gaussian distribution.
+A matrix with the mean, standard deviation, and peak log density
+of the combined (product) Gaussian distribution.
 }
 \description{
 This function combines two Gaussian distributions by taking the mean and
@@ -32,4 +35,3 @@ distribution that is the combination of the two.
 combine_gaussians(mu_1 = 7.1, sd_1 = 0.12, mu_2 = 7.3, sd_2 = 0.15)
 }
 }
-

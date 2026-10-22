@@ -11,7 +11,15 @@
 #' @export
 #'
 #' @examples
-#' # TBD
+#' \dontrun{
+#' d = h95_data_no_NA
+#' nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+#' template = create_template(nd[, 1:3], nd$vowels)
+#' out = BSTM(log(d[1, c("f1", "f2", "f3")]), log(d$f0[1]), template)
+#' class(out)
+#' out[, c("posterior_mu", "posterior_probability")]
+#' plot(out)
+#' }
 
 STM_output <- function(df,stimulus, template, parameters,vowel_priors) {
 
@@ -21,7 +29,6 @@ STM_output <- function(df,stimulus, template, parameters,vowel_priors) {
   output$template = template
   output$parameters = parameters
   output$vowel_priors = vowel_priors
-  output$parameters = parameters
 
   class(output) = "STM_output"
   return(output)
@@ -53,17 +60,23 @@ print.STM_output = function(x, digits = 3, ...) {
 
 #' @rdname STM_output
 #' @param x An object of class "STM_output".
-#' @param i Row index.
+#' @param i Row index (or column index, if \code{j} is not given).
 #' @param j Column index.
-#' @return A subset of the data frame in the STM_output object.
-#' @usage \method{[}{STM_output}(x, i, j)
+#' @param drop Passed to the data frame subsetting method.
+#' @return A subset of the data frame in the STM_output object, following data
+#' frame semantics: \code{x[i]} selects columns, \code{x[i, j]} selects rows
+#' and columns.
+#' @usage \method{[}{STM_output}(x, i, j, drop)
 #' @export
 #' @method `[` STM_output
 #' @aliases [.STM_output
 #'
 
-`[.STM_output` <- function(x, i, j) {
-  return(x$df[i, j])
+`[.STM_output` <- function(x, i, j, drop) {
+  n_args = nargs() - !missing(drop)
+  if (n_args == 2) return(x$df[i])
+  if (missing(drop)) return(x$df[i, j])
+  return(x$df[i, j, drop = drop])
 }
 
 

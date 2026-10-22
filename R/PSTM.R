@@ -5,84 +5,45 @@
 #' each category based on the estimate of psi, the template, and token
 #' acoustic properties.
 #'
-#' @param ffs A vector, matrix, or dataframe of formant frequencies. Each row
-#' is a different observation, each column is a formant measurement.
-#' @param f0 A vector of fundamental frequencies
-#' @param template A template object
+#' @param ffs A vector, matrix, or dataframe of log-transformed formant
+#' frequencies. Each row is a different observation, each column is a formant
+#' measurement.
+#' @param f0 A vector of log-transformed fundamental frequencies, one per row
+#' of \code{ffs}.
+#' @param template A template object, created with \code{create_template()}
+#' from normalized (log-mean-centered) formant data.
 #' @param method A function that that estimates the 'best' psi given some information.
-#' @param vowel_priors A vector of prior probabilities for each category
+#' @param vowel_priors A vector of prior probabilities for each category. If
+#' named, names must match \code{template$classes}; otherwise values must be in
+#' the order of \code{template$classes}.
 #' @param correctOUflow A boolean indicating whether to correct for underflow
 #' and overflow using the correctOUflow() function.
 #' @param lite A boolean indicating whether to return compact output for speed.
 #' @param ... Additional arguments are passed to internal call of estimation method.
-#' @return In the case of a single token, a dataframe of psi estimates and
-#' posterior probabilites. If several tokens (i.e. rows) are passed, output is
-#' a list of dataframes.
+#' @return In the case of a single token (a vector, or a one-row matrix or
+#' dataframe), an \code{STM_output} object. If several tokens are passed, an
+#' \code{STM_output_list}. If \code{lite = TRUE}, a list with matrices
+#' \code{psi} and \code{posterior}, one row per token.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' d = h95_data_no_NA
+#' nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+#' template = create_template(nd[, 1:3], nd$vowels)
+#'
+#' # formants and f0 must be log-transformed
+#' ffs = log(d[1:5, c("f1", "f2", "f3")])
+#' f0 = log(d$f0[1:5])
+#'
+#' out = PSTM(ffs[1, ], f0[1], template)
+#' out
+#'
+#' res = PSTM(ffs, f0, template)
+#' res$winners
+#' }
 #' @export
 
 PSTM = function(ffs, f0, template, method = method6, vowel_priors=NULL,
                 correctOUflow = TRUE, lite = FALSE, ...) {
-
-  call_method = function(ffs_i, f0_i) {
-    if (lite) {
-      return(method(ffs=ffs_i, f0=f0_i, template=template,
-                    vowel_priors=vowel_priors,
-                    correctOUflow=correctOUflow,
-                    type ="PSTM", lite=TRUE, ...))
-    }
-    method(ffs=ffs_i, f0=f0_i, template=template,
-           vowel_priors=vowel_priors,correctOUflow=correctOUflow,
-           type ="PSTM", ...)
-  }
-
-  collect_lite_results = function(results) {
-    psi = do.call(rbind, lapply(results, function(x) x$psi))
-    posterior = do.call(rbind, lapply(results, function(x) x$posterior))
-    rownames(psi) = seq_len(nrow(psi))
-    rownames(posterior) = seq_len(nrow(posterior))
-    list(psi = psi, posterior = posterior)
-  }
-
-  if (is.vector(ffs)) {
-    # If ffs is a vector, call method directly
-    if (length(f0)>1) cat("Warning: Using first element of f0 vector.\n")
-    result = call_method(unlist(ffs), f0[1])
-    if (lite) return(collect_lite_results(list(result)))
-    return(result)
-
-  } else if (is.matrix(ffs)) {
-    # If ffs is a matrix, apply method to each row of the matrix
-
-    if (length(f0)!=nrow(ffs)) stop("nrow(ffs) must equal length(f0).\n")
-
-    results <- lapply(seq_len(nrow(ffs)), function(i)
-      call_method(ffs[i, ], f0[i]))
-    if (lite) return(collect_lite_results(results))
-    results = STM_output_list(results)
-    return(results)
-
-  } else if (is.data.frame(ffs)) {
-    # If ffs is a dataframe
-
-    if (length(f0)!=nrow(ffs)) stop("nrow(ffs) must equal length(f0).\n")
-
-    if (nrow(ffs)==1)
-      return({
-        result = call_method(unlist(ffs), f0[1])
-        if (lite) collect_lite_results(list(result)) else result
-      })
-
-    ffs_matrix <- as.matrix(ffs)
-    results <- lapply(seq_len(nrow(ffs_matrix)), function(i)
-      call_method(ffs_matrix[i,], f0[i]))
-    if (lite) return(collect_lite_results(results))
-    results = STM_output_list(results)
-    return(results)
-
-  } else {
-    stop("Unsupported input type. Please provide a vector, matrix, or dataframe.")
-  }
+  xstm_internal(ffs, f0, template, method = method, vowel_priors = vowel_priors,
+                correctOUflow = correctOUflow, lite = lite, .type = "PSTM", ...)
 }
-

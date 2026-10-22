@@ -11,7 +11,7 @@ STM_output(df, stimulus, template, parameters, vowel_priors)
 
 \method{print}{STM_output}(x, digits = 3, ...)
 
-\method{[}{STM_output}(x, i, j)
+\method{[}{STM_output}(x, i, j, drop)
 
 \method{plot}{STM_output}(x, y, ...)
 }
@@ -32,26 +32,32 @@ STM_output(df, stimulus, template, parameters, vowel_priors)
 
 \item{...}{Additional arguments passed to other methods.}
 
-\item{i}{Row index.}
+\item{i}{Row index (or column index, if \code{j} is not given).}
 
 \item{j}{Column index.}
+
+\item{drop}{Passed to the data frame subsetting method.}
 
 \item{y}{unused parameter}
 }
 \value{
 An object of class "STM_output".
 
-A subset of the data frame in the STM_output object.
+A subset of the data frame in the STM_output object, following data
+frame semantics: \code{x[i]} selects columns, \code{x[i, j]} selects rows
+and columns.
 }
 \description{
 This function creates an object of the S3 class "STM_output", the output of the XSTM functions.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-out <- BSTM(as.numeric(h95_data_no_NA[1, 4:6]), h95_data_no_NA$f0[1], template)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+out = BSTM(log(d[1, c("f1", "f2", "f3")]), log(d$f0[1]), template)
 class(out)
+out[, c("posterior_mu", "posterior_probability")]
+plot(out)
 }
 }
-

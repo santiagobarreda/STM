@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_likelihood.R
 \name{model_likelihood}
 \alias{model_likelihood}
-\title{Model likelihood from posterior probabilities}
+\title{model_likelihood}
 \usage{
 model_likelihood(
   classifications,
@@ -11,28 +11,32 @@ model_likelihood(
 )
 }
 \arguments{
-\item{classifications}{A vector of classifications}
+\item{classifications}{A matrix or data frame of classification counts
+(one row per token, one column per category), or a vector of counts.}
 
-\item{posterior_probabilities}{A vector of posterior probabilities.}
+\item{posterior_probabilities}{Posterior probabilities with the same shape
+as \code{classifications}: a matrix, data frame, or \code{STM_posteriors}
+object (one row per token), or a vector. If both inputs have column names,
+the posterior columns are matched to the classification columns by name.}
 
-\item{correctOUflow}{A boolean indicating whether to correct for underflow.}
+\item{correctOUflow}{A boolean indicating whether to correct for underflow.
+For matrix input, zeros are replaced and each row is rescaled to sum to one.
+For vector input, zeros are replaced but no rescaling is done, since the
+elements need not belong to the same token.}
 }
 \value{
-A scalar, the likelihood of the model given the classifications and posterior probabilities.
+A scalar, the log likelihood of the model given the classifications
+and posterior probabilities.
 }
 \description{
-Calculates an overall model likelihood score from observed classifications and
-their corresponding posterior probabilities.
+Calculate the likelihood of a model given classifications and posterior probabilities
 }
 \examples{
 \dontrun{
-classifications <- c("a", "i", "a", "u")
-posterior_probabilities <- c(0.8, 0.7, 0.6, 0.9)
-model_likelihood(classifications, posterior_probabilities)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+post = STM(nd[, 1:3], template)
+model_likelihood(h95_classifications, post)
 }
 }
-
-
-
-
-

@@ -7,14 +7,16 @@
 normalize(formants, speakers, vowels)
 }
 \arguments{
-\item{formants}{A matrix of formant frequencies}
+\item{formants}{A matrix or data frame of formant frequencies}
 
 \item{speakers}{A vector of speaker IDs}
 
 \item{vowels}{A vector of vowel IDs}
 }
 \value{
-A matrix of normalized formant data
+A data frame with the normalized log formant frequencies (columns
+named \code{formants.<name>}), \code{vowels}, \code{speakers}, and
+\code{gbar}, the speaker's estimated log-mean formant frequency (psi).
 }
 \description{
 This function normalizes formant data using the least-squares method
@@ -22,12 +24,15 @@ described in Barreda and Nearey (2018). This method is robust in the presence
 of to missing and unbalanced data. Log-mean normalized data and speaker
 psi estimates are returned.
 }
+\details{
+Formants may be given in Hz or already log-transformed (data whose maximum
+is 20 or less are assumed to be logged). Values of zero are treated as
+missing.
+}
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-formants <- as.matrix(h95_data_no_NA[, 4:6])
-out <- normalize(formants, h95_data_no_NA$speaker, h95_data_no_NA$vowel)
+d = h95_data_no_NA
+out = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
 head(out)
 }
 }
-

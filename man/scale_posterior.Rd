@@ -24,8 +24,8 @@ representing posteriors, and modifying posterior densities as required.
 }
 \examples{
 \dontrun{
-posterior <- matrix(c(7.1, 0.10, -1.2, 7.3, 0.12, -0.8), ncol = 3, byrow = TRUE)
+# columns: mean, sd, peak log density, and two columns to be filled in
+posterior = cbind(c(7.1, 7.3), c(0.10, 0.12), c(-1.2, -0.8), 0, 0)
 scale_posterior(posterior, type = "BSTM")
 }
 }
-

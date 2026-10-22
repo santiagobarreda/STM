@@ -2,7 +2,7 @@
 #'
 #' The Hillenbrand et al. vowel data.
 #'
-#' @format A data frame with 100 rows and 3 variables:
+#' @format A data frame with 1668 rows and 49 variables:
 #'
 #' \describe{
 #'   \item{\code{file}}{the filename}
@@ -55,9 +55,13 @@
 #'   \item{\code{uw}}{Number of classifications into uw.}
 #'   \item{\code{vote}}{The modal response}
 #' }
-#' @source \url{https://example.com/dataset_source}
+#' @source Hillenbrand, J., Getty, L. A., Clark, M. J., & Wheeler, K. (1995).
+#' Acoustic characteristics of American English vowels. The Journal of the
+#' Acoustical Society of America, 97(5), 3099-3111. \doi{10.1121/1.411872}
 #' @examples
-#' # TBD
+#' \dontrun{
+#' str(h95_data)
+#' }
 
 "h95_data"
 
@@ -66,7 +70,7 @@
 #' The Hillenbrand et al. vowel data. NA values have been imputed using the
 #' normalize_impute function provided in this package.
 #'
-#' @format A data frame with 100 rows and 3 variables:
+#' @format A data frame with 1668 rows and 49 variables:
 #'
 #' \describe{
 #'   \item{\code{file}}{the filename}
@@ -119,18 +123,22 @@
 #'   \item{\code{uw}}{Number of classifications into uw.}
 #'   \item{\code{vote}}{The modal response}
 #' }
-#' @source \url{https://example.com/dataset_source}
+#' @source Hillenbrand, J., Getty, L. A., Clark, M. J., & Wheeler, K. (1995).
+#' Acoustic characteristics of American English vowels. The Journal of the
+#' Acoustical Society of America, 97(5), 3099-3111. \doi{10.1121/1.411872}
 #' @examples
-#' # TBD
+#' \dontrun{
+#' str(h95_data_no_NA)
+#' }
 
 "h95_data_no_NA"
 
 
 #' Hillenbrand et al. (1995) Classifications
 #'
-#' Classification data data for the H95 dataset from 20 listeners presented the vowels at random.
+#' Classification data for the H95 dataset from 20 listeners presented the vowels at random.
 #'
-#' @format A data frame with 1168 rows and 12 columns:
+#' @format A data frame with 1668 rows and 12 columns:
 #' \describe{
 #'   \item{\code{ae}}{Number of classifications into ae.}
 #'   \item{\code{ah}}{Number of classifications into ah.}
@@ -145,9 +153,13 @@
 #'   \item{\code{uh}}{Number of classifications into uh.}
 #'   \item{\code{uw}}{Number of classifications into uw.}
 #' }
-#' @source \url{https://example.com/dataset_source}
+#' @source Hillenbrand, J., Getty, L. A., Clark, M. J., & Wheeler, K. (1995).
+#' Acoustic characteristics of American English vowels. The Journal of the
+#' Acoustical Society of America, 97(5), 3099-3111. \doi{10.1121/1.411872}
 #' @examples
-#' # TBD
+#' \dontrun{
+#' head(h95_classifications)
+#' }
 
 "h95_classifications"
 
@@ -155,9 +167,11 @@
 #' Colors for plotting
 #'
 #'
-#' @format A vector of colors for plotting
+#' @format A character vector of 15 colors for plotting
 #' @examples
-#' # TBD
+#' \dontrun{
+#' head(cols)
+#' }
 
 "cols"
 

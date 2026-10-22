@@ -11,11 +11,16 @@
 #' @return A matrix of posterior probabilities with an additional column
 #' representing the scaled posterior probabilities.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' # columns: mean, sd, peak log density, and two columns to be filled in
+#' posterior = cbind(c(7.1, 7.3), c(0.10, 0.12), c(-1.2, -0.8), 0, 0)
+#' scale_posterior(posterior, type = "BSTM")
+#' }
 #' @export
 #'
 
 scale_posterior = function(posterior, type = "BSTM"){
+  type = match.arg(type, c("BSTM", "PSTM"))
   if (type == "BSTM"){
     # peak density * sd * sqrt(2*pi) is integral of each posterior
     vowel_integrals = posterior[,3] + log(posterior[,2]) + (log(pi) + log(2)) * (0.5)

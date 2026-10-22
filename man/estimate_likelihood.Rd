@@ -4,19 +4,22 @@
 \alias{estimate_likelihood}
 \title{Estimate the likelihood of a given set of ffs}
 \usage{
-estimate_likelihood(ffs, means, covariance, precision = NULL)
+estimate_likelihood(ffs, means, covariance, precision = NULL, log_det = NULL)
 }
 \arguments{
-\item{ffs}{A vector of formant frequencies}
+\item{ffs}{A vector of log-transformed formant frequencies}
 
 \item{means}{A vector of category means}
 
 \item{covariance}{A matrix of category covariance}
 
 \item{precision}{A matrix of category precision}
+
+\item{log_det}{The log determinant of the category covariance matrix.}
 }
 \value{
-A list of the likelihood mean, likelihood standard deviation, and likelihood density.
+A named vector of the likelihood mean, likelihood standard
+deviation, and peak log likelihood density.
 }
 \description{
 This function estimates the likelihood of a given set of formant frequencies
@@ -25,10 +28,10 @@ standard deviation, and density of the likelihood.
 }
 \examples{
 \dontrun{
-ffs <- c(500, 1500, 2500)
-means <- c(520, 1480, 2480)
-covariance <- diag(c(10000, 25000, 40000))
-estimate_likelihood(ffs, means, covariance)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+ffs = log(as.numeric(d[1, c("f1", "f2", "f3")]))
+estimate_likelihood(ffs, template$means["ae", ], template$covariance[["ae"]])
 }
 }
-

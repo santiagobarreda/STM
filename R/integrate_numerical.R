@@ -8,7 +8,11 @@
 #' @param y A vector of y values
 #' @return A scalar of the integral of the function.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' x = seq(-3, 3, length.out = 200)
+#' y = dnorm(x)
+#' integrate_numerical(x, y)
+#' }
 #' @export
 
 

@@ -7,11 +7,12 @@
 get_posterior(results_list)
 }
 \arguments{
-\item{results_list}{A list of BSTM results}
+\item{results_list}{A list of BSTM results: an \code{STM_output_list}, or a
+plain list of \code{STM_output} objects.}
 }
 \value{
-A matrix of posterior probabilities with columns for each category
-and rows for each token.
+An \code{STM_posteriors} object containing a matrix of posterior
+probabilities with columns for each category and rows for each token.
 }
 \description{
 This function takes a list of BSTM results and returns a matrix of posterior
@@ -20,11 +21,10 @@ and rows for each token.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-res <- BSTM(h95_data_no_NA[1:5, 4:6], h95_data_no_NA$f0[1:5], template)
-post <- get_posterior(res)
-head(post)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+res = BSTM(log(d[1:5, c("f1", "f2", "f3")]), log(d$f0[1:5]), template)
+get_posterior(res)
 }
 }
-

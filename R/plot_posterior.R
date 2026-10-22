@@ -1,6 +1,6 @@
 
-#' @title Plot STM modelling results
-
+#' Plot STM modelling results
+#'
 #' Plot the posterior distribution of the formants and the fundamental frequency
 #' given a template and a set of formant frequencies.
 #'
@@ -8,7 +8,13 @@
 #' @param psi_range A vector of the range of psi values to plot
 #' @param n_steps A scalar of the number of steps to take in the psi range
 #' @examples
-#' # TBD
+#' \dontrun{
+#' d = h95_data_no_NA
+#' nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+#' template = create_template(nd[, 1:3], nd$vowels)
+#' out = BSTM(log(d[1, c("f1", "f2", "f3")]), log(d$f0[1]), template)
+#' plot_posterior(out)
+#' }
 #' @export
 #' @importFrom graphics layout par plot lines points text rect abline
 #' @importFrom graphics axis grid legend mtext
@@ -23,10 +29,10 @@ plot_posterior = function(df, psi_range = c(6.9, 7.6),
              "#FEEF94C8", "#88021BB4", "#719F9FDC", "#CA87B9BF", "#6C0F2DC8")
 
   if (inherits(df, "STM_output")) df = df$df
+  cols = rep_len(cols, nrow(df))
 
-  old_par = par(no.readonly = TRUE)
-
-  par (mfrow = c(3,1), mar = c(.2,2.2,.1,.1), oma = c(4,.5,.5,.5))
+  old_par = par (mfrow = c(3,1), mar = c(.2,2.2,.1,.1), oma = c(4,.5,.5,.5))
+  on.exit(par(old_par))
 
   if (is.na(df$prior_mu[1])){
     psi_prior = cbind(seq(psi_range[1], psi_range[2], length.out = n_steps),
@@ -64,8 +70,6 @@ plot_posterior = function(df, psi_range = c(6.9, 7.6),
     lines (v_posteriors[,1], v_posteriors[,2], col = cols[i],lwd=4)
   }
   mtext (bquote("Psi"), side=1,line=3)
-
-  par(old_par)
 
 }
 

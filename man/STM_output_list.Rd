@@ -6,7 +6,7 @@
 \alias{$.STM_output_list}
 \alias{[[.STM_output_list}
 \alias{length.STM_output_list}
-\alias{sapply.STM_output_list}
+\alias{[.STM_output_list}
 \title{Create an object of class "STM_output_list"}
 \usage{
 STM_output_list(output_list)
@@ -19,7 +19,7 @@ STM_output_list(output_list)
 
 \method{length}{STM_output_list}(x)
 
-\method{sapply}{STM_output_list}(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE)
+\method{[}{STM_output_list}(x, i)
 }
 \arguments{
 \item{output_list}{A list of STM_output objects.}
@@ -31,32 +31,27 @@ STM_output_list(output_list)
 \item{name}{Element name.}
 
 \item{i}{index.}
-
-\item{X}{An object of class "STM_output_list".}
-
-\item{FUN}{The function to be applied.}
-
-\item{simplify}{A logical indicating whether to simplify the result.}
-
-\item{USE.NAMES}{A logical indicating whether to use names.}
 }
 \value{
 An object of class "STM_output_list".
 
 A subset of the data frame in the STM_output_list object.
+
+A new STM_output_list containing the selected elements.
 }
 \description{
-Creates an S3 \code{STM_output_list} object from multiple token-level
-\code{STM_output} results and exposes convenience accessors for summaries.
+This function creates an object of the S3 class "STM_output_list", the a list of outputs
+of the XSTM functions.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-res <- BSTM(h95_data_no_NA[1:5, 4:6], h95_data_no_NA$f0[1:5], template)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+res = BSTM(log(d[1:5, c("f1", "f2", "f3")]), log(d$f0[1:5]), template)
 length(res)
-head(res$winners)
+res$winners
+res[[1]]
+res[2:3]
 }
-
 }
-

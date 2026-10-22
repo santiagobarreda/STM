@@ -4,7 +4,14 @@
 \alias{dmvnorm_fast}
 \title{Multivariate Normal Density}
 \usage{
-dmvnorm_fast(features, means, covariance, log = FALSE)
+dmvnorm_fast(
+  features,
+  means,
+  covariance,
+  log = FALSE,
+  precision = NULL,
+  log_det = NULL
+)
 }
 \arguments{
 \item{features}{A matrix or vector of observations.}
@@ -14,19 +21,24 @@ dmvnorm_fast(features, means, covariance, log = FALSE)
 \item{covariance}{A matrix of covariance.}
 
 \item{log}{A boolean indicating whether to return the log density.}
+
+\item{precision}{Optional precomputed inverse of \code{covariance}.}
+
+\item{log_det}{Optional precomputed log determinant of \code{covariance}.
+If both \code{precision} and \code{log_det} are provided, \code{covariance}
+is not used and no matrix decomposition is performed.}
 }
 \value{
-A scalar, the density of the multivariate normal distribution.
+A vector of densities, one for each row of \code{features}.
 }
 \description{
 Calculate the density of a multivariate normal distribution.
 }
 \examples{
 \dontrun{
-features <- matrix(c(500, 1500, 2500), nrow = 1)
-means <- c(520, 1480, 2480)
-covariance <- diag(c(10000, 25000, 40000))
+features = log(matrix(c(500, 1500, 2500), nrow = 1))
+means = log(c(520, 1480, 2480))
+covariance = diag(c(0.01, 0.005, 0.004))
 dmvnorm_fast(features, means, covariance, log = TRUE)
 }
 }
-

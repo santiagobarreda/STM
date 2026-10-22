@@ -7,7 +7,14 @@
 #' @export
 #'
 #' @examples
-#' # TBD
+#' \dontrun{
+#' mat = matrix(runif(12), nrow = 3)
+#' mat = mat / rowSums(mat)
+#' post = STM_posteriors(mat)
+#' post
+#' post[1, ]
+#' nrow(post)
+#' }
 
 STM_posteriors <- function(mat) {
 
@@ -42,30 +49,54 @@ print.STM_posteriors = function(x, digits = 3, ...) {
 #' @param x An object of class "STM_posteriors".
 #' @param i Row index.
 #' @param j Column index.
-#' @return A subset of the data frame in the STM_posteriors object.
-#' @usage \method{[}{STM_posteriors}(x, i, j)
+#' @param drop Passed to the matrix subsetting method.
+#' @return A subset of the posterior matrix in the STM_posteriors object,
+#' following matrix semantics.
+#' @usage \method{[}{STM_posteriors}(x, i, j, drop)
 #' @export
 #' @method `[` STM_posteriors
 #' @aliases [.STM_posteriors
 #'
 
-`[.STM_posteriors` <- function(x, i, j) {
-  return(x$df[i, j])
+`[.STM_posteriors` <- function(x, i, j, drop = TRUE) {
+  n_args = nargs() - !missing(drop)
+  if (n_args == 2) return(x$df[i])
+  return(x$df[i, j, drop = drop])
 }
 
 
-
 #' @rdname STM_posteriors
-#' @param X An object of class "STM_posteriors".
-#' @param MARGIN A vector giving the subscripts which the function will be applied over.
-#' @param FUN The function to be applied.
+#' @param x An object of class "STM_posteriors".
 #' @param ... Additional arguments passed to other methods.
+#' @details \code{dim()}, \code{dimnames()} and \code{as.matrix()} methods
+#' are provided, so \code{nrow()}, \code{ncol()} and \code{apply()} work
+#' directly on STM_posteriors objects.
 #' @export
-#' @method apply STM_posteriors
+#' @method as.matrix STM_posteriors
 #'
 
-apply.STM_posteriors = function(X, MARGIN, FUN, ...) {
-  apply(X$df, MARGIN, FUN, ...)
+as.matrix.STM_posteriors = function(x, ...) {
+  x$df
+}
+
+
+#' @rdname STM_posteriors
+#' @export
+#' @method dim STM_posteriors
+#'
+
+dim.STM_posteriors = function(x) {
+  dim(x$df)
+}
+
+
+#' @rdname STM_posteriors
+#' @export
+#' @method dimnames STM_posteriors
+#'
+
+dimnames.STM_posteriors = function(x) {
+  dimnames(x$df)
 }
 
 

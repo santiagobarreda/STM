@@ -14,7 +14,11 @@
 #' @param warning A boolean indicating whether to display a warning message.
 #' @return A data frame of normalized formant data.
 #' @examples
-#' # TBD
+#' \dontrun{
+#' d = h95_data_no_NA
+#' out = lobanov_normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+#' head(out)
+#' }
 #' @export
 #' @importFrom stats sd
 #'
@@ -29,6 +33,7 @@ lobanov_normalize = function (formants, speakers, vowels, warning = FALSE){
   if (warning)
     warning("Lobanov normalization is terrible, please don't use it other than to investigate how terrible it is. For more information on this, please see: \nBarreda, S. (2021). Perceptual validation of vowel normalization methods for variationist research. Language Variation and Change, 33(1), 27-53.", call. = FALSE)
 
+  formants = as.matrix(formants)
   nffs = ncol(formants)
   speakers = as.factor(as.character(speakers))
   n_speakers = length(unique(speakers))
@@ -41,12 +46,14 @@ lobanov_normalize = function (formants, speakers, vowels, warning = FALSE){
     mff = NULL
     sdff = NULL
     for (i in 1:nffs) {
-      mff = c(mff, mean(tapply(formants[temp, i], vowels[temp], mean)))
-      sdff = c(sdff, sd(tapply(formants[temp, i], vowels[temp], mean)))
+      # vowel means for this speaker; vowels the speaker did not produce are NA
+      vowel_means = tapply(formants[temp, i], vowels[temp], mean, na.rm = TRUE)
+      mff = c(mff, mean(vowel_means, na.rm = TRUE))
+      sdff = c(sdff, sd(vowel_means, na.rm = TRUE))
     }
-    mffs = matrix(mff, nrow(formants[temp, ]), nffs, byrow = TRUE)
-    sdffs = matrix(sdff, nrow(formants[temp, ]), nffs, byrow = TRUE)
-    formants[temp, ] = (formants[temp, ] - mffs)/sdffs
+    mffs = matrix(mff, sum(temp), nffs, byrow = TRUE)
+    sdffs = matrix(sdff, sum(temp), nffs, byrow = TRUE)
+    formants[temp, ] = (formants[temp, , drop = FALSE] - mffs)/sdffs
   }
   output = data.frame(formants, speaker = speakers, vowel = vowels)
   return(output)

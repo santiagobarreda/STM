@@ -13,16 +13,17 @@ method6(
   f0_hat_sd = 0.1327,
   f0_hat_intercept = -10.32,
   f0_hat_slope = 2.145,
-  vowel_priors = vowel_priors,
+  vowel_priors = NULL,
   correctOUflow = TRUE,
   type = "BSTM",
+  lite = FALSE,
   ...
 )
 }
 \arguments{
-\item{ffs}{A vector of formant frequencies}
+\item{ffs}{A vector of log-transformed formant frequencies}
 
-\item{f0}{A scalar of fundamental frequency}
+\item{f0}{A scalar of log-transformed fundamental frequency}
 
 \item{template}{A template object containing category means and covariance information}
 
@@ -40,12 +41,16 @@ method6(
 
 \item{correctOUflow}{A boolean indicating whether to correct for underflow}
 
-\item{type}{A string indicating the type of method to use for estimating psi}
+\item{type}{Either "BSTM" or "PSTM", indicating how posterior probabilities
+are calculated.}
+
+\item{lite}{A boolean indicating whether to return compact output for speed.}
 
 \item{...}{additional parameters}
 }
 \value{
-A scalar of the estimated psi value, and optionally the log density at that location.
+An \code{STM_output} object or, if \code{lite = TRUE}, a list with
+the psi estimate and posterior probability for each category.
 }
 \description{
 This function estimates the psi value using the method 6 from Nearey and Assmann (2007).
@@ -53,9 +58,10 @@ It also returns the log density of the estimated psi value.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-method6(as.numeric(h95_data_no_NA[1, 4:6]), f0 = h95_data_no_NA$f0[1], template = template)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+method6(log(as.numeric(d[1, c("f1", "f2", "f3")])), f0 = log(d$f0[1]),
+        template = template)
 }
 }
-

@@ -27,16 +27,19 @@ matrix for all classes.}
 \item{...}{Additional arguments.}
 }
 \value{
-A template object.
+A template object: a list with the class labels, class means,
+covariance and precision matrices, covariance log determinants, and the
+range of each feature.
 }
 \description{
 Create a dialectal template for use with the (X)STM family of functions.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
-template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
-print(template)
+d = h95_data_no_NA
+nd = normalize(d[, c("f1", "f2", "f3")], d$speaker, d$vowel)
+template = create_template(nd[, 1:3], nd$vowels)
+template
+plot(template)
 }
 }
-

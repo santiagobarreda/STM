@@ -5,7 +5,7 @@
 \alias{h95_data_no_NA}
 \title{Hillenbrand et al. (1995)}
 \format{
-A data frame with 100 rows and 3 variables:
+A data frame with 1668 rows and 49 variables:
 
 \describe{
   \item{\code{file}}{the filename}
@@ -60,7 +60,9 @@ A data frame with 100 rows and 3 variables:
 }
 }
 \source{
-\url{https://example.com/dataset_source}
+Hillenbrand, J., Getty, L. A., Clark, M. J., & Wheeler, K. (1995).
+Acoustic characteristics of American English vowels. The Journal of the
+Acoustical Society of America, 97(5), 3099-3111. \doi{10.1121/1.411872}
 }
 \usage{
 h95_data_no_NA
@@ -71,10 +73,7 @@ normalize_impute function provided in this package.
 }
 \examples{
 \dontrun{
-data(h95_data_no_NA)
 str(h95_data_no_NA)
-head(h95_data_no_NA)
 }
 }
 \keyword{datasets}
-
