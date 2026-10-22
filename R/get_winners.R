@@ -15,7 +15,7 @@
 
 get_winners = function (results_list) {
   if (inherits(results_list, "STM_output_list")){
-    output = data.frame(t(sapply (results_list$list, function(x){
+    output = data.frame(t(sapply (unclass(results_list), function(x){
       winner = which.max(x$df$posterior_probability)
       psi_hat = x$df$posterior_mu[winner]
       vowel_hat = rownames(x$df)[winner]

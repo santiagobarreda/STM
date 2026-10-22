@@ -2,7 +2,7 @@
 % Please edit documentation in R/correctOUflow_internal.R
 \name{correctOUflow_internal}
 \alias{correctOUflow_internal}
-\title{correctOUflow_internal}
+\title{Correct underflow/overflow in posterior probabilities}
 \usage{
 correctOUflow_internal(posterior_probabilities)
 }
@@ -13,5 +13,18 @@ correctOUflow_internal(posterior_probabilities)
 A vector of posterior probabilities
 }
 \description{
-Correct for underflow and overflow in posterior probabilities
+Rescales posterior probabilities to avoid numerical underflow or overflow while
+preserving a valid probability simplex.
 }
+
+\examples{
+\dontrun{
+probs <- c(0, 1e-300, 0.4, 0.6)
+correctOUflow_internal(probs)
+}
+}
+
+
+
+
+

@@ -47,5 +47,11 @@ A subset of the data frame in the STM_output object.
 This function creates an object of the S3 class "STM_output", the output of the XSTM functions.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+out <- BSTM(as.numeric(h95_data_no_NA[1, 4:6]), h95_data_no_NA$f0[1], template)
+class(out)
 }
+}
+

@@ -19,5 +19,12 @@ probabilities. The function returns a matrix with columns for each category
 and rows for each token.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+res <- BSTM(h95_data_no_NA[1:5, 4:6], h95_data_no_NA$f0[1:5], template)
+post <- get_posterior(res)
+head(post)
 }
+}
+

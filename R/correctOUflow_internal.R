@@ -27,7 +27,7 @@ correctOUflow_internal = function (posterior_probabilities){
 #' @keywords internal
 
 correctOUflow_internal_ = function (posterior_probabilities){
-  posterior_probabilities[posterior_probabilities == 0] = 1 - 0.9999999999999998889777
+  posterior_probabilities[posterior_probabilities == 0] = .Machine$double.eps
   posterior_probabilities = posterior_probabilities / sum(posterior_probabilities)
   return(posterior_probabilities)
 }

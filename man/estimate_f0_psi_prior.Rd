@@ -40,5 +40,8 @@ This function estimates the joint prior distribution of f0 and psi.
 It also returns the peak log density of the prior distribution.
 }
 \examples{
-# TBD
+\dontrun{
+estimate_f0_psi_prior(f0 = 220, PSI_prior_mean = 7.2, PSI_prior_sd = 0.13)
 }
+}
+

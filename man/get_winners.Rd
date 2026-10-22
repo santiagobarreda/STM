@@ -18,5 +18,12 @@ It accepts a list of results and returns a data frame with columns for the psi
 and vowel.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+res <- BSTM(h95_data_no_NA[1:5, 4:6], h95_data_no_NA$f0[1:5], template)
+wins <- get_winners(res)
+head(wins)
 }
+}
+

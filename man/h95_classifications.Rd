@@ -31,6 +31,11 @@ h95_classifications
 Classification data data for the H95 dataset from 20 listeners presented the vowels at random.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_classifications)
+str(h95_classifications)
+head(h95_classifications)
+}
 }
 \keyword{datasets}
+

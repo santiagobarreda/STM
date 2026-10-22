@@ -26,5 +26,10 @@ Returns posterior probabilities for each category based on the template and
 token acoustic properties.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+template <- create_template(h95_data_no_NA[, 4:6], h95_data_no_NA$vowel)
+STM(h95_data_no_NA[1:10, 4:6], template)
 }
+}
+

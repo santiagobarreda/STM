@@ -15,9 +15,11 @@
 
 get_posterior = function (results_list){
   if (inherits(results_list, "STM_output_list")){
-    output = t(sapply (results_list$list, function(results_list)
-      results_list$df$posterior_probability))
-    colnames (output) = rownames(results_list$list[[1]]$df)
+    output = do.call(rbind, lapply(unclass(results_list), function(result) {
+      posterior = result$df$posterior_probability
+      names(posterior) = rownames(result$df)
+      posterior
+    }))
     output = STM_posteriors(output)
     return (output)
   }

@@ -4,10 +4,12 @@ Title: Simulation and analysis using the Sliding Template family of models
 Version: 0.0.1
 Author: Santiago Barreda
 Maintainer: Santiago Barreda <sbarreda@ucdavis.edu>
-Description: TBD.
+Description: Implements the Sliding Template family of models for
+    simulation, template construction, and posterior analysis of vowel
+    classification data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: 
     R (>= 2.10)

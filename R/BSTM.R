@@ -13,6 +13,7 @@
 #' @param vowel_priors A vector of prior probabilities for each category
 #' @param correctOUflow A boolean indicating whether to correct for underflow
 #' and overflow using the correctOUflow() function.
+#' @param lite A boolean indicating whether to return compact output for speed.
 #' @param ... Additional arguments are passed to internal call of estimation method.
 #' @return In the case of a single token, a dataframe of psi estimates and
 #' posterior probabilites. If several tokens (i.e. rows) are passed, output is
@@ -22,23 +23,43 @@
 #' @export
 
 
-BSTM = function(ffs, f0, template, method = method6, vowel_priors=NULL,correctOUflow = TRUE, ...) {
+BSTM = function(ffs, f0, template, method = method6, vowel_priors=NULL,
+                correctOUflow = TRUE, lite = FALSE, ...) {
+
+  call_method = function(ffs_i, f0_i) {
+    if (lite) {
+      return(method(ffs=ffs_i, f0=f0_i, template=template,
+                    vowel_priors=vowel_priors,
+                    correctOUflow=correctOUflow, lite=TRUE, ...))
+    }
+    method(ffs=ffs_i, f0=f0_i, template=template,
+           vowel_priors=vowel_priors,
+           correctOUflow=correctOUflow, ...)
+  }
+
+  collect_lite_results = function(results) {
+    psi = do.call(rbind, lapply(results, function(x) x$psi))
+    posterior = do.call(rbind, lapply(results, function(x) x$posterior))
+    rownames(psi) = seq_len(nrow(psi))
+    rownames(posterior) = seq_len(nrow(posterior))
+    list(psi = psi, posterior = posterior)
+  }
 
   if (is.vector(ffs)) {
     # If ffs is a vector, call method directly
     if (length(f0)>1) cat("Warning: Using first element of f0 vector.\n")
-    return(ffs=method(unlist(ffs), f0=f0[1], template=template,
-                      method=method, vowel_priors=vowel_priors,
-                      correctOUflow=correctOUflow, ...))
+    result = call_method(unlist(ffs), f0[1])
+    if (lite) return(collect_lite_results(list(result)))
+    return(result)
 
   } else if (is.matrix(ffs)) {
     # If ffs is a matrix, apply method to each row of the matrix
 
     if (length(f0)!=nrow(ffs)) stop("nrow(ffs) must equal length(f0).\n")
 
-    results <- apply(ffs, 1, function(row)
-      method(ffs=row, f0=f0, template=template, method=method,
-             vowel_priors=vowel_priors,correctOUflow=correctOUflow, ...))
+    results <- lapply(seq_len(nrow(ffs)), function(i)
+      call_method(ffs[i, ], f0[i]))
+    if (lite) return(collect_lite_results(results))
     results = STM_output_list(results)
     return(results)
 
@@ -48,14 +69,15 @@ BSTM = function(ffs, f0, template, method = method6, vowel_priors=NULL,correctOU
     if (length(f0)!=nrow(ffs)) stop("nrow(ffs) must equal length(f0).\n")
 
     if (nrow(ffs)==1)
-      return(ffs=method(unlist(ffs), f0=f0[1], template=template,
-                        method=method, vowel_priors=vowel_priors,
-                        correctOUflow=correctOUflow, ...))
+      return({
+        result = call_method(unlist(ffs), f0[1])
+        if (lite) collect_lite_results(list(result)) else result
+      })
 
     ffs_matrix <- as.matrix(ffs)
-    results <- lapply(1:nrow(ffs_matrix), function(i)
-      method(ffs=ffs_matrix[i,], f0=f0[i], template=template, method=method,
-             vowel_priors=vowel_priors,correctOUflow=correctOUflow))
+    results <- lapply(seq_len(nrow(ffs_matrix)), function(i)
+      call_method(ffs_matrix[i,], f0[i]))
+    if (lite) return(collect_lite_results(results))
     results = STM_output_list(results)
     return(results)
 

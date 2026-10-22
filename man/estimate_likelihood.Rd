@@ -4,7 +4,7 @@
 \alias{estimate_likelihood}
 \title{Estimate the likelihood of a given set of ffs}
 \usage{
-estimate_likelihood(ffs, means, covariance, precision = solve(covariance))
+estimate_likelihood(ffs, means, covariance, precision = NULL)
 }
 \arguments{
 \item{ffs}{A vector of formant frequencies}
@@ -24,5 +24,11 @@ given a set of category means and covariance matrices. It returns the mean,
 standard deviation, and density of the likelihood.
 }
 \examples{
-# TBD
+\dontrun{
+ffs <- c(500, 1500, 2500)
+means <- c(520, 1480, 2480)
+covariance <- diag(c(10000, 25000, 40000))
+estimate_likelihood(ffs, means, covariance)
 }
+}
+

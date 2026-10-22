@@ -14,6 +14,10 @@ cols
 Colors for plotting
 }
 \examples{
-# TBD
+\dontrun{
+data(cols)
+head(cols)
+}
 }
 \keyword{datasets}
+

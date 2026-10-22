@@ -70,6 +70,11 @@ The Hillenbrand et al. vowel data. NA values have been imputed using the
 normalize_impute function provided in this package.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+str(h95_data_no_NA)
+head(h95_data_no_NA)
+}
 }
 \keyword{datasets}
+

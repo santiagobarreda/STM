@@ -28,5 +28,8 @@ standard deviation of the two distributions and returning a new Gaussian
 distribution that is the combination of the two.
 }
 \examples{
-# TBD
+\dontrun{
+combine_gaussians(mu_1 = 7.1, sd_1 = 0.12, mu_2 = 7.3, sd_2 = 0.15)
 }
+}
+

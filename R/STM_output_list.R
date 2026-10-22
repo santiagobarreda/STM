@@ -11,14 +11,10 @@
 #' # TBD
 
 STM_output_list <- function(output_list) {
-
-  output = list()
-  output$list = output_list
-  output$winners = get_winners(output_list)
-  output$posterior = get_posterior(output_list)
-
-  class(output) = "STM_output_list"
-  return(output)
+  class(output_list) = "STM_output_list"
+  attr(output_list, "winners") = get_winners(output_list)
+  attr(output_list, "posterior") = get_posterior(output_list)
+  return(output_list)
 }
 
 
@@ -34,9 +30,31 @@ STM_output_list <- function(output_list) {
 print.STM_output_list = function(x, ...) {
 
   cat ("\nSTM_output_list object with the following elements:\n\n")
-  cat ("$list: a list of",length(x$list),"STM_output objects\n")
+  cat ("$list: a list of",length(x),"STM_output objects\n")
   cat ("$winners: a data frame of the winning psi and vowel for each token\n")
   cat ("$posterior: a data frame of the posterior probabilities for each token\n\n")
+}
+
+
+#' @rdname STM_output_list
+#' @param x An object of class "STM_output_list".
+#' @param name Element name.
+#' @export
+#' @method $ STM_output_list
+#'
+
+`$.STM_output_list` <- function(x, name) {
+  if (name == "list") {
+    output = unclass(x)
+    attr(output, "winners") = NULL
+    attr(output, "posterior") = NULL
+    return(output)
+  }
+
+  if (name == "winners") return(attr(x, "winners"))
+  if (name == "posterior") return(attr(x, "posterior"))
+
+  NextMethod()
 }
 
 
@@ -51,7 +69,18 @@ print.STM_output_list = function(x, ...) {
 #'
 
 `[[.STM_output_list` <- function(x, i) {
-  return(x$list[[i]])
+  return(unclass(x)[[i]])
+}
+
+
+#' @rdname STM_output_list
+#' @param x An object of class "STM_output_list".
+#' @export
+#' @method length STM_output_list
+#'
+
+length.STM_output_list = function(x) {
+  length(unclass(x))
 }
 
 
@@ -66,7 +95,7 @@ print.STM_output_list = function(x, ...) {
 #'
 
 sapply.STM_output_list = function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE){
-  sapply(X[[1]], FUN, ...)
+  sapply(unclass(X), FUN, ..., simplify = simplify, USE.NAMES = USE.NAMES)
 }
 
 

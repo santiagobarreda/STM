@@ -16,6 +16,9 @@
 #' @export
 
 STM = function(formants, template, vowel_priors = NULL, correctOUflow=TRUE) {
+  if (is.vector(formants)) formants = matrix(formants, nrow = 1)
+  if (is.data.frame(formants)) formants = as.matrix(formants)
+
   n_samples = nrow(formants)
   n_classes = nrow(template$means)
   log_vowel_density = matrix(0, n_samples, n_classes)
@@ -25,7 +28,8 @@ STM = function(formants, template, vowel_priors = NULL, correctOUflow=TRUE) {
       formants, template$means[j,], template$covariance[[j]], log = TRUE)
   }
 
-  log_vowel_density = log_vowel_density - apply(log_vowel_density, 1, function(x) mean(x))
+  log_vowel_density = sweep(log_vowel_density, 1,
+                            apply(log_vowel_density, 1, max), `-`)
 
   if (!is.null(vowel_priors))
     log_vowel_density = sweep(log_vowel_density, 2, log(vowel_priors), `+`)

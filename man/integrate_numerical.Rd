@@ -20,5 +20,10 @@ rule. The function iaccepts a set of x and y values and returns the
 integral of the function.
 }
 \examples{
-# TBD
+\dontrun{
+x <- seq(-3, 3, length.out = 200)
+y <- dnorm(x)
+integrate_numerical(x, y)
 }
+}
+

@@ -28,5 +28,11 @@ Barreda, S. (2021). Perceptual validation of vowel normalization methods
 for variationist research. Language Variation and Change, 33(1), 27-53.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+formants <- as.matrix(h95_data_no_NA[, 4:6])
+out <- lobanov_normalize(formants, h95_data_no_NA$speaker, h95_data_no_NA$vowel)
+head(out)
 }
+}
+

@@ -19,5 +19,10 @@ Bootstrap data for use in cross-validation. Resampling with replacement is
 done based on unique elements in the 'speaker' vector.
 }
 \examples{
-# TBD
+\dontrun{
+data(h95_data_no_NA)
+boot <- bootstrap_data(h95_data_no_NA, speaker = h95_data_no_NA$speaker)
+head(boot)
 }
+}
+
