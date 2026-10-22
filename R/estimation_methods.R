@@ -38,35 +38,11 @@ method6 = function (ffs, f0, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
-  n_classes = nrow(template$means)
-  likelihoods = template_likelihoods(ffs, template)
-
-  priors_f0_adjusted = estimate_f0_psi_prior(f0, PSI_prior_mean=PSI_prior_mean,
-                                              PSI_prior_sd=PSI_prior_sd,
-                                              f0_hat_sd=f0_hat_sd,
-                                              f0_hat_intercept=f0_hat_intercept,
-                                              f0_hat_slope=f0_hat_slope)
-  priors = matrix(priors_f0_adjusted, n_classes, 3, byrow=TRUE)
-  colnames(priors) = c('prior_mu', 'prior_sd', 'prior_density')
-
-  if (!is.null(vowel_priors))
-    priors[, "prior_density"] = priors[, "prior_density"] + log(vowel_priors)
-
-  posterior = find_posterior(likelihoods, priors, type = type)
-  posterior = finalize_posterior(posterior, correctOUflow)
-
-  if (lite) {
-    return(list(psi = posterior[, "posterior_mu"],
-                posterior = posterior[, "posterior_probability"]))
-  }
-
-  stimulus = c(ffs, f0 = f0)
   parameters = c(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd,
                  f0_hat_sd=f0_hat_sd,f0_hat_intercept=f0_hat_intercept,
                  f0_hat_slope=f0_hat_slope)
-  output = STM_output(cbind(posterior, likelihoods, priors), stimulus,
-                      template, parameters,vowel_priors)
-  return(output)
+  run_single_token(ffs, f0, template, "f0", parameters, parameters, vowel_priors,
+                   type, correctOUflow, lite)
 }
 
 
@@ -108,31 +84,9 @@ method3 = function (ffs, f0 = NA, template, PSI_prior_mean=7.233,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
-  n_classes = nrow(template$means)
-  likelihoods = template_likelihoods(ffs, template)
-
-  priors = matrix(c(PSI_prior_mean,PSI_prior_sd,
-                    log(1/sqrt(PSI_prior_sd^2 * pi * 2))),
-                  n_classes,3,byrow=TRUE)
-  colnames(priors) = c('prior_mu', 'prior_sd', 'prior_density')
-
-  if (!is.null(vowel_priors))
-    priors[, "prior_density"] = priors[, "prior_density"] + log(vowel_priors)
-
-  posterior = find_posterior(likelihoods, priors, type = type)
-  posterior = finalize_posterior(posterior, correctOUflow)
-
-  if (lite) {
-    return(list(psi = posterior[, "posterior_mu"],
-                posterior = posterior[, "posterior_probability"]))
-  }
-
-  stimulus = c(ffs, f0 = f0)
   parameters = c(PSI_prior_mean=PSI_prior_mean, PSI_prior_sd=PSI_prior_sd)
-  output = STM_output(cbind(posterior, likelihoods, priors), stimulus,
-                      template, parameters,vowel_priors)
-
-  return(output)
+  run_single_token(ffs, f0, template, "fixed", parameters, parameters, vowel_priors,
+                   type, correctOUflow, lite)
 }
 
 
@@ -168,32 +122,23 @@ method2 = function (ffs, f0=NA, template, vowel_priors=NULL, correctOUflow=TRUE,
 
   type = match.arg(type, c("BSTM", "PSTM"))
   vowel_priors = check_vowel_priors(vowel_priors, template$classes)
-  n_classes = nrow(template$means)
-  likelihoods = template_likelihoods(ffs, template)
+  run_single_token(ffs, f0, template, "none", NULL, NA, vowel_priors,
+                   type, correctOUflow, lite)
+}
 
-  priors = matrix (NA_real_, n_classes, 3)
-  colnames(priors) = c('prior_mu', 'prior_sd', 'prior_density')
 
-  posterior = cbind(likelihoods, 0, 0)
-  if (!is.null(vowel_priors)){
-    posterior[,3] = posterior[,3] + log(vowel_priors)
-    priors[, "prior_density"] = log(vowel_priors)
-  }
+# Run one token through the vectorized engine.
+#' @noRd
 
-  posterior = scale_posterior(posterior, type=type)
-  colnames(posterior) = c('posterior_mu', 'posterior_sd', 'posterior_density',
-                          'posterior_probability', 'rounded_pp')
-  posterior = finalize_posterior(posterior, correctOUflow)
-
-  if (lite) {
-    return(list(psi = posterior[, "posterior_mu"],
-                posterior = posterior[, "posterior_probability"]))
-  }
-
-  stimulus = c(ffs, f0 = f0)
-  parameters = NA
-  output = STM_output(cbind(posterior, likelihoods, priors), stimulus,
-                      template, parameters,vowel_priors)
-
-  return(output)
+run_single_token = function(ffs, f0, template, prior, params, parameters,
+                            vowel_priors, type, correctOUflow, lite){
+  x = matrix(as.numeric(unlist(ffs)), nrow = 1)
+  batch = xstm_batch(x, f0, template, prior, params, vowel_priors, type,
+                     correctOUflow)
+  if (lite)
+    return(list(psi = batch$posterior_mu[1, ],
+                posterior = batch$posterior_probability[1, ]))
+  results = batch_results(batch, x, f0, template, parameters, vowel_priors,
+                          lite = FALSE, stimuli = list(c(ffs, f0 = f0)))
+  return(results$outputs[[1]])
 }

@@ -89,3 +89,71 @@ test_that("lobanov_normalize handles one-token speakers and missing vowels", {
 
   expect_no_error(lobanov_normalize(formants[1:13, ], c(rep("a", 12), "b"), d$vowel[1:13]))
 })
+
+# Reference fit with lm(), as normalize_impute() did before the fast solver
+lm_reference = function(f, speakers, vowels){
+  y = c(log(as.matrix(f)))
+  df = data.frame(y = y, s = factor(rep(speakers, ncol(f))),
+                  vk = interaction(factor(rep(vowels, ncol(f))), rep(seq_len(ncol(f)), each = nrow(f))))
+  df = droplevels(df[!is.na(df$y), ])
+  stats::contrasts(df$vk) = "contr.sum"
+  model = stats::lm(y ~ 0 + s + vk, data = df)
+  list(model = model, gbar = stats::coef(model)[paste0("s", levels(df$s))])
+}
+
+test_that("fast solver matches lm() on balanced and unbalanced data", {
+  # complete, balanced data
+  ref = lm_reference(formants, d$speaker, d$vowel)
+  gbar = tapply(nd$gbar, nd$speakers, unique)
+  expect_equal(as.numeric(gbar), unname(ref$gbar), tolerance = 1e-12)
+
+  # data with missing values
+  f = h95_data[, c("f1", "f2", "f3")]
+  ref = lm_reference(f, h95_data$speaker, h95_data$vowel)
+  out = normalize(f, h95_data$speaker, h95_data$vowel)
+  expect_equal(as.numeric(tapply(out$gbar, out$speakers, unique)), unname(ref$gbar),
+               tolerance = 1e-12)
+
+  # unbalanced: drop a random 30% of tokens
+  set.seed(4)
+  keep = runif(nrow(d)) > 0.3
+  ref = lm_reference(formants[keep, ], d$speaker[keep], d$vowel[keep])
+  out = normalize(formants[keep, ], d$speaker[keep], d$vowel[keep])
+  expect_equal(as.numeric(tapply(out$gbar, droplevels(out$speakers), unique)),
+               unname(ref$gbar), tolerance = 1e-12)
+})
+
+test_that("fast imputation matches lm() predictions and residual sd", {
+  f = h95_data[, c("f1", "f2", "f3")]
+  missing = is.na(f)
+  ref = lm_reference(f, h95_data$speaker, h95_data$vowel)
+  newdata = data.frame(s = factor(rep(h95_data$speaker, 3)),
+                       vk = interaction(factor(rep(h95_data$vowel, 3)), rep(1:3, each = nrow(f))))
+  newdata = newdata[c(missing), ]
+  expected = round(exp(stats::predict(ref$model, newdata = newdata)))
+  imputed = impute_NA(f, h95_data$speaker, h95_data$vowel)
+  expect_equal(unname(imputed[missing]), unname(expected))
+
+  fit_data = data.frame(ffs = c(log(as.matrix(f))), speakers_x = factor(rep(h95_data$speaker, 3)),
+                        vk = interaction(factor(rep(h95_data$vowel, 3)), rep(1:3, each = nrow(f))))
+  fit_data = droplevels(fit_data[!is.na(fit_data$ffs), ])
+  fit = fit_speaker_cell(fit_data$ffs, fit_data$speakers_x, fit_data$vk)
+  expect_equal(fit$sigma, stats::sigma(ref$model), tolerance = 1e-10)
+  lm_fit = fit_speaker_cell_lm(fit_data)
+  expect_equal(fit$speaker, lm_fit$speaker, tolerance = 1e-10)
+  expect_equal(fit$cell, lm_fit$cell, tolerance = 1e-10)
+})
+
+test_that("disconnected designs fall back to lm()", {
+  # two groups of speakers that share no vowels
+  sub = d[d$speaker %in% c("m01", "m02", "w01", "w02"), ]
+  group_a = sub$speaker %in% c("m01", "m02") & sub$vowel %in% c("ae", "ah", "aw")
+  group_b = sub$speaker %in% c("w01", "w02") & sub$vowel %in% c("iy", "uw", "oo")
+  sub = sub[group_a | group_b, ]
+  fit_data = data.frame(ffs = c(log(as.matrix(sub[, c("f1", "f2", "f3")]))),
+                        speakers_x = factor(rep(sub$speaker, 3)),
+                        vk = interaction(factor(rep(sub$vowel, 3)), rep(1:3, each = nrow(sub))))
+  fit_data = droplevels(fit_data)
+  expect_null(fit_speaker_cell(fit_data$ffs, fit_data$speakers_x, fit_data$vk))
+  expect_warning(normalize(sub[, c("f1", "f2", "f3")], sub$speaker, sub$vowel), "rank deficient")
+})

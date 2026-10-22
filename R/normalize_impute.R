@@ -42,13 +42,10 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
                           vk = interaction(rep(vowels, nffs), fnum))
   observed = !is.na(ffs)
   fit_data = droplevels(model_data[observed, ])
-  stats::contrasts(fit_data$vk) = "contr.sum"
 
-  model = stats::lm (ffs ~ 0 + speakers_x + vk, data = fit_data)
-  if (anyNA(stats::coef(model)))
-    warning("The normalization model is rank deficient; some estimates are not identifiable.",
-            call. = FALSE)
-  gbars = stats::coef(model)[paste0("speakers_x", levels(speakers))]
+  fit = fit_speaker_cell(fit_data$ffs, fit_data$speakers_x, fit_data$vk)
+  if (is.null(fit)) fit = fit_speaker_cell_lm(fit_data)
+  gbars = fit$speaker[levels(speakers)]
   names(gbars) = levels(speakers)
 
   if (impute){
@@ -60,12 +57,10 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
           !all(missing$speakers_x %in% levels(fit_data$speakers_x)))
         stop("Cannot impute: some speaker or vowel/formant combination has no observed data.",
              call. = FALSE)
-      missing$vk = factor(missing$vk, levels = levels(fit_data$vk))
-      missing$speakers_x = factor(missing$speakers_x, levels = levels(fit_data$speakers_x))
-
-      predicted = stats::predict(model, newdata = missing)
+      predicted = unname(fit$speaker[as.character(missing$speakers_x)] +
+                           fit$cell[as.character(missing$vk)])
       if (sim_error)
-        predicted = predicted + stats::rnorm(length(missing_idx), 0, stats::sigma(model))
+        predicted = predicted + stats::rnorm(length(missing_idx), 0, fit$sigma)
 
       output[missing_idx] = if (logged) predicted else round(exp(predicted))
     }
@@ -79,4 +74,61 @@ normalize_impute = function (formants, speakers, vowels, normalize = TRUE,
   output = data.frame(normalized, vowels = vowels, speakers = speakers,
                       gbar = speaker_gbar)
   return (output)
+}
+
+
+# Least-squares fit of y ~ 0 + speaker + cell, with sum-to-zero cell effects
+# (equivalent to lm() with contr.sum on the cells). The speaker effects are
+# eliminated from the normal equations, leaving a small system in the cell
+# effects only. Returns NULL if that system is singular (a disconnected
+# design), in which case fit_speaker_cell_lm() should be used.
+#' @noRd
+
+fit_speaker_cell = function(y, speaker, cell){
+  n_speakers = nlevels(speaker)
+  n_cells = nlevels(cell)
+  s = as.integer(speaker)
+  k = as.integer(cell)
+
+  counts = matrix(tabulate(s + n_speakers * (k - 1L), n_speakers * n_cells),
+                  n_speakers, n_cells)
+  n_s = rowSums(counts)
+  n_k = colSums(counts)
+  sum_s = as.vector(rowsum(y, s, reorder = TRUE))
+  sum_k = as.vector(rowsum(y, k, reorder = TRUE))
+
+  # reduced normal equations A b = rhs; A is singular along the all-ones
+  # vector, so A + 1 (adding a matrix of ones) gives the solution with sum(b) = 0
+  A = diag(n_k, n_cells) - crossprod(counts, counts / n_s)
+  rhs = sum_k - drop(crossprod(counts, sum_s / n_s))
+  A1 = A + 1
+  if (rcond(A1) < 1e-10) return(NULL)
+  cell_effects = drop(solve(A1, rhs))
+  cell_effects = cell_effects - mean(cell_effects)
+  speaker_effects = (sum_s - drop(counts %*% cell_effects)) / n_s
+
+  residuals = y - speaker_effects[s] - cell_effects[k]
+  df = length(y) - (n_speakers + n_cells - 1)
+  list(speaker = stats::setNames(speaker_effects, levels(speaker)),
+       cell = stats::setNames(cell_effects, levels(cell)),
+       sigma = sqrt(sum(residuals^2) / df))
+}
+
+
+# Same fit using lm(), for designs fit_speaker_cell() cannot handle.
+#' @noRd
+
+fit_speaker_cell_lm = function(fit_data){
+  stats::contrasts(fit_data$vk) = "contr.sum"
+  model = stats::lm (ffs ~ 0 + speakers_x + vk, data = fit_data)
+  if (anyNA(stats::coef(model)))
+    warning("The normalization model is rank deficient; some estimates are not identifiable.",
+            call. = FALSE)
+  coefs = stats::coef(model)
+  speaker = coefs[paste0("speakers_x", levels(fit_data$speakers_x))]
+  names(speaker) = levels(fit_data$speakers_x)
+  # cell effects under the sum-to-zero contrasts, including the last level
+  cell = drop(stats::contrasts(fit_data$vk) %*% coefs[grep("^vk", names(coefs))])
+  names(cell) = levels(fit_data$vk)
+  list(speaker = speaker, cell = cell, sigma = stats::sigma(model))
 }

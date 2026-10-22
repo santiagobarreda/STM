@@ -4,7 +4,7 @@
 #' This function estimates the joint prior distribution of f0 and psi.
 #' It also returns the peak log density of the prior distribution.
 #'
-#' @param f0 A scalar of fundamental frequency
+#' @param f0 A log-transformed fundamental frequency, or a vector of them
 #' @param PSI_prior_mean A scalar of the mean of the prior distribution of psi
 #' given f0
 #' @param PSI_prior_sd A scalar of the standard deviation of the prior distribution of psi
@@ -13,8 +13,9 @@
 #' @param f0_hat_intercept A scalar of the intercept of the estimated f0 given psi
 #' @param f0_hat_slope A scalar of the slope of the estimated f0 given psi
 #' @param ... additional parameters
-#' @return A list containing the mean and standard deviation of the prior distribution
-#' of f0 given psi, and the log density at that location.
+#' @return A named vector containing the mean and standard deviation of the prior
+#' distribution of psi given f0, and the log density at that location. If
+#' \code{f0} has more than one element, a matrix with one row per element.
 #' @examples
 #' \dontrun{
 #' # f0 must be log-transformed
@@ -26,21 +27,9 @@ estimate_f0_psi_prior =
   function(f0, PSI_prior_mean=7.233, PSI_prior_sd = 0.1284,f0_hat_sd=0.1327,
            f0_hat_intercept=-10.32, f0_hat_slope=2.145, ...){
 
-    intercept_f0_given_psi = ((f0_hat_slope*f0)/(f0_hat_sd^2) -
-                                (f0_hat_intercept*f0_hat_slope)/(f0_hat_sd^2))
-    slope_f0_given_psi = ((-f0_hat_slope^2 / (f0_hat_sd^2)))
-    f0_given_psi_mu = (-intercept_f0_given_psi/slope_f0_given_psi)
-    f0_given_psi_sd = sqrt(-1/slope_f0_given_psi)
-    f0_hat = f0_hat_intercept +f0_hat_slope*f0_given_psi_mu
-
-    f0_given_psi_density = stats::dnorm (f0, f0_hat, f0_hat_sd, log=TRUE)
-    psi_prior_density = stats::dnorm (PSI_prior_mean, PSI_prior_mean, PSI_prior_sd, log=TRUE)
-
-    prior_density = f0_given_psi_density + psi_prior_density
-    tmp = combine_gaussians(f0_given_psi_mu, f0_given_psi_sd,
-                            PSI_prior_mean, PSI_prior_sd,
-                            f0_given_psi_density, psi_prior_density)
-
+    tmp = f0_psi_prior(f0, PSI_prior_mean, PSI_prior_sd, f0_hat_sd,
+                       f0_hat_intercept, f0_hat_slope)
+    if (length(f0) > 1) return(tmp)
     output = c(prior_mu=tmp[1], prior_sd=tmp[2], prior_density=tmp[3])
     return (output)
 }

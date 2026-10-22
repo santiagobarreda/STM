@@ -119,3 +119,47 @@ test_that("templates without cached log determinants still work", {
   expect_equal(BSTM(lf[1, ], lf0[1], old_template)$df, BSTM(lf[1, ], lf0[1], template)$df)
   expect_equal(STM(nd[1:5, 1:3], old_template)$df, STM(nd[1:5, 1:3], template)$df)
 })
+
+test_that("batch processing matches one token at a time", {
+  one_at_a_time = function(...) method6(...)   # not a built-in, so not batched
+  for (fn in c(BSTM, PSTM)) {
+    batched = fn(lf[1:30, ], lf0[1:30], template)
+    looped = fn(lf[1:30, ], lf0[1:30], template, method = one_at_a_time)
+    expect_equal(batched$winners, looped$winners)
+    expect_equal(batched$posterior, looped$posterior)
+    for (i in c(1, 17, 30)) expect_equal(batched[[i]], looped[[i]])
+  }
+  # non-default parameters and vowel priors are passed through to the batch
+  priors = setNames(c(5, rep(1, 11)), template$classes)
+  batched = BSTM(lf[1:10, ], lf0[1:10], template, PSI_prior_mean = 7.3, PSI_prior_sd = 0.2,
+                 vowel_priors = priors)
+  looped = BSTM(lf[1:10, ], lf0[1:10], template, method = one_at_a_time,
+                PSI_prior_mean = 7.3, PSI_prior_sd = 0.2, vowel_priors = priors)
+  expect_equal(batched$posterior, looped$posterior)
+  expect_equal(batched[[3]]$parameters, looped[[3]]$parameters)
+
+  for (m in list(method3, method2)) {
+    wrapped = function(...) m(...)
+    expect_equal(BSTM(lf[1:10, ], lf0[1:10], template, method = m)$posterior,
+                 BSTM(lf[1:10, ], lf0[1:10], template, method = wrapped)$posterior)
+  }
+})
+
+test_that("winners match which.max of each token's posterior", {
+  res = BSTM(lf, lf0, template)
+  expected = vapply(seq_along(res), function(i) {
+    p = res[[i]]$df$posterior_probability
+    rownames(res[[i]]$df)[which.max(p)]
+  }, character(1))
+  expect_equal(res$winners$vowel_hat, expected)
+})
+
+test_that("estimate_f0_psi_prior is vectorized over f0", {
+  m = estimate_f0_psi_prior(lf0[1:5])
+  expect_equal(dim(m), c(5, 3))
+  expect_equal(m[2, ], estimate_f0_psi_prior(lf0[2]), ignore_attr = TRUE)
+})
+
+test_that("ffs with the wrong number of columns is an error", {
+  expect_error(BSTM(lf[1:3, 1:2], lf0[1:3], template), "one column per template formant")
+})
